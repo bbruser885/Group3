@@ -11,30 +11,33 @@ namespace ChocAn
             Console.ResetColor();
             Console.WriteLine("1. Display all members");
             Console.WriteLine("2. Display all providers");
-            Console.WriteLine("3. Add a member");
-            Console.WriteLine("4. Add a provider");
+            Console.WriteLine("3. Display all services");
+            Console.WriteLine("4. Display all consultations");
+            Console.WriteLine("5. Add a member");
+            Console.WriteLine("6. Add a provider");
+            Console.WriteLine("7. Create a consultation");
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine("-- Testing Functions ------------------------");
             Console.ResetColor();
-            Console.WriteLine("5. Empty the database");
-            Console.WriteLine("6. Seed the database with some fake test data");
+            Console.WriteLine("8. Empty the user data");
+            Console.WriteLine("9. Seed the database with some fake user data");
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine("---------------------------------------------");
             Console.ResetColor();
-            Console.WriteLine("7. Quit");
+            Console.WriteLine("0. Quit");
             Console.WriteLine();
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.Write("Your choice: ");
             Console.ResetColor();
-            var input = Console.ReadLine();
-            return Convert.ToInt32(input);
+            return Convert.ToInt32(Console.ReadLine());
         }
 
         public static void Main (string[] args)
         {
+            BaseModel.InitializeDatabase();
             Console.Clear();
-            int choice = 0;
-            while (choice != 7) {
+            int choice = -1;
+            while (choice != 0) {
                 choice = ReadChoice();
                 switch (choice) {
                     case 1:
@@ -44,16 +47,25 @@ namespace ChocAn
                         Controller.PrintAllProviders();
                         break;
                     case 3:
-                        Controller.CreateMember();
+                        Controller.PrintAllServices();
                         break;
                     case 4:
-                        Controller.CreateProvider();
+                        Controller.PrintAllConsultations();
                         break;
                     case 5:
-                        Controller.ClearAllData();
+                        Controller.CreateMember();
                         break;
                     case 6:
-                        Controller.SeedData();
+                        Controller.CreateProvider();
+                        break;
+                    case 7:
+                        Controller.CreateConsultation();
+                        break;
+                    case 8:
+                        BaseModel.ClearUserData();
+                        break;
+                    case 9:
+                        Controller.SeedUserData();
                         break;
                     default:
                         break;

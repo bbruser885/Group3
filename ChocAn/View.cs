@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Globalization;
 using System.Reflection;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 
 namespace ChocAn
 {
@@ -52,7 +54,7 @@ namespace ChocAn
 
         /**
          * Factory method of sorts to initialize a user of the given type.
-         * Allows creating isntances of objects that inherit from BaseUser
+         * Allows creating instances of objects that inherit from BaseUser
          * without having to duplicate all the initialization code.
          *
          * Params:
@@ -88,6 +90,58 @@ namespace ChocAn
 
         public static Provider ReadProvider() {
             return (Provider)ReadUser(UserTypes.Provider);
+        }
+
+        public static Provider ReadProviderById() {
+            Provider provider;
+            do {
+                Console.Write("Enter your provider ID number: ");
+                int id = Convert.ToInt32(Console.ReadLine());
+                provider = Provider.Collection.FindById(id);
+                if (provider == null) {
+                    Console.WriteLine("Couldn't find a provider with that ID.");
+                }
+            } while (provider == null);
+            return provider;
+        }
+
+        public static Member ReadMemberById() {
+            Member member;
+            do {
+                Console.Write("Enter the member ID number: ");
+                int id = Convert.ToInt32(Console.ReadLine());
+                member = Member.Collection.FindById(id);
+                if (member == null) {
+                    Console.WriteLine("Couldn't find a member with that ID.");
+                }
+            } while (member == null);
+            return member;
+        }
+
+        public static Service ReadServiceById() {
+            Service service;
+            do {
+                Console.Write("Enter the service ID number: ");
+                int id = Convert.ToInt32(Console.ReadLine());
+                service = Service.Collection.FindById(id);
+                if (service == null) {
+                    Console.WriteLine("Couldn't find a service with that ID.");
+                }
+            } while (service == null);
+            return service;
+        }
+
+        public static DateTime ReadDateTime() {
+            string dateString;
+            DateTime date;
+            CultureInfo enUS = new CultureInfo("en-US");
+            do {
+                Console.Write("Enter a date (MM-DD-YYYY): ");
+                dateString = Console.ReadLine();
+            } while (!DateTime.TryParseExact(
+                dateString, "MM-dd-yyyy", enUS, DateTimeStyles.None, out date)
+            );
+            return date;
         }
 
         /**

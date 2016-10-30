@@ -13,6 +13,14 @@ namespace ChocAn
             View.PrintAll(Member.Collection.FindAll());
         }
 
+        public static void PrintAllServices() {
+            View.PrintAll(Service.Collection.FindAll());
+        }
+
+        public static void PrintAllConsultations() {
+            View.PrintAll(Consultation.Collection.FindAll());
+        }
+
         /**
          * Gets user input to create and save a new member record
          */
@@ -27,18 +35,24 @@ namespace ChocAn
             Provider.Collection.Insert(View.ReadProvider());
         }
 
-        /**
-         * Test method: Remove all data from the database
-         */
-        public static void ClearAllData() {
-            BaseModel.ClearAllData();
+        public static void CreateConsultation() {
+            Provider provider = View.ReadProviderById();
+            Member member = View.ReadMemberById();
+            Service service = View.ReadServiceById();
+            DateTime date = View.ReadDateTime();
+            Consultation.Collection.Insert(new Consultation {
+                ProviderRecord = provider,
+                MemberRecord = member,
+                ServiceRecord = service,
+                Date = date
+            });
         }
 
         /**
-         * Test method: Seed the database with some fake data
+         * Test method: Seed the database with some fake user data
          */
-        public static void SeedData() {
-            ClearAllData();
+        public static void SeedUserData() {
+            BaseModel.ClearUserData();
             Member.Collection.Insert(new Member {
                     Name = "Howard Price",
                     Street = "1373 Armistice Circle",
