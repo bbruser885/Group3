@@ -12,6 +12,8 @@ namespace ChocAn
         // User type enum for use in factory methods
         public enum UserTypes { Member, Provider }
 
+        protected static CultureInfo EnUS = new CultureInfo("en-US");
+
         /**
          * Use the validation annotations on a model to get valid inputs from
          * the Console. This could stand a refactor. Doesn't currently work for
@@ -134,12 +136,11 @@ namespace ChocAn
         public static DateTime ReadDateTime() {
             string dateString;
             DateTime date;
-            CultureInfo enUS = new CultureInfo("en-US");
             do {
                 Console.Write("Enter a date (MM-DD-YYYY): ");
                 dateString = Console.ReadLine();
             } while (!DateTime.TryParseExact(
-                dateString, "MM-dd-yyyy", enUS, DateTimeStyles.None, out date)
+                dateString, "MM-dd-yyyy", EnUS, DateTimeStyles.None, out date)
             );
             return date;
         }
