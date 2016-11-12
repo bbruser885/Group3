@@ -5,7 +5,8 @@ namespace ChocAn
 {
     class MainClass
     {
-        private static int ReadChoice() {
+        private static int ReadChoice()
+        {
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine("-- ChocAn Menu ------------------------------");
             Console.ResetColor();
@@ -29,11 +30,14 @@ namespace ChocAn
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.Write("Your choice: ");
             Console.ResetColor();
-            return Convert.ToInt32(Console.ReadLine());
+            int c;
+            if (!int.TryParse (Console.ReadLine (), out c)) return -1;
+            return c;
         }
 
         public static void Main (string[] args)
         {
+            // Initialize the database with the service catalog data
             BaseModel.InitializeDatabase();
             Console.Clear();
             int choice = -1;

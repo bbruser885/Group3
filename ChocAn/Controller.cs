@@ -39,7 +39,7 @@ namespace ChocAn
             Provider provider = View.ReadProviderById();
             Member member = View.ReadMemberById();
             Service service = View.ReadServiceById();
-            DateTime date = View.ReadDateTime();
+            DateTime date = View.ReadDateTime("Date of consultation");
             Consultation.Collection.Insert(new Consultation {
                 ProviderRecord = provider,
                 MemberRecord = member,
