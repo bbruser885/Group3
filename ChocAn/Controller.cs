@@ -1,41 +1,54 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace ChocAn
 {
     public class Controller
     {
 
-        public static void PrintAllProviders() {
+        public static void PrintAllProviders()
+		{
             View.PrintAll(Provider.Collection.FindAll());
         }
 
-        public static void PrintAllMembers() {
+        public static void PrintAllMembers()
+		{
             View.PrintAll(Member.Collection.FindAll());
         }
 
-        public static void PrintAllServices() {
+        public static void PrintAllManagers()
+		{
+            View.PrintAll(Manager.Collection.FindAll());
+        }
+
+        public static void PrintAllServices()
+		{
             View.PrintAll(Service.Collection.FindAll());
         }
 
-        public static void PrintAllConsultations() {
+        public static void PrintAllConsultations()
+		{
             View.PrintAll(Consultation.Collection.FindAll());
         }
 
-        /**
-         * Gets user input to create and save a new member record
-         */
-        public static void CreateMember() {
+        public static void CreateMember()
+		{
             Member.Collection.Insert(View.ReadMember());
         }
 
-        /**
-         * Gets user input to create and save a new provider record
-         */
-        public static void CreateProvider() {
+        public static void CreateProvider()
+		{
             Provider.Collection.Insert(View.ReadProvider());
         }
 
-        public static void CreateConsultation() {
+        public static void CreateManager()
+        {
+            Manager.Collection.Insert(View.ReadManager());
+        }
+
+        public static void CreateConsultation()
+		{
             Provider provider = View.ReadProviderById();
             Member member = View.ReadMemberById();
             Service service = View.ReadServiceById();
@@ -48,11 +61,17 @@ namespace ChocAn
             });
         }
 
+
+        public static void ClearUserData()
+        {
+            BaseModel.ClearUserData();
+        }
+
         /**
          * Test method: Seed the database with some fake user data
          */
-        public static void SeedUserData() {
-            BaseModel.ClearUserData();
+        public static void SeedUserData()
+		{
             Member.Collection.Insert(new Member {
                     Name = "Howard Price",
                     Street = "1373 Armistice Circle",

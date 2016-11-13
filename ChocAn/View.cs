@@ -7,7 +7,95 @@ namespace ChocAn
 {
     public class View
     {
-        protected static CultureInfo EnUs = new CultureInfo("en-US");
+        private static readonly CultureInfo EnUs = new CultureInfo("en-US");
+
+        private static readonly string[] MenuOptions = {
+            "Display all members",
+            "Display all providers",
+            "Display all managers",
+            "Display all services",
+            "Display all consultations",
+            "Add a member",
+            "Add a provider",
+            "Add a manager",
+            "Create a consultation",
+            "Empty all user data",
+            "Seed the database with some fake user data"
+        };
+
+        private static void PrintMenuOptions()
+        {
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine("-- ChocAn Menu ------------------------------");
+            Console.ResetColor();
+            for (int i = 0; i < MenuOptions.Length; i++)
+            {
+                Console.WriteLine(string.Format("{0}. {1}", i+1, MenuOptions[i]));
+            }
+            Console.WriteLine("0. Quit");
+        }
+
+        public static void MainMenuLoop()
+        {
+            int choice;
+            do
+            {
+                PrintMenuOptions();
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.Write("Your choice: ");
+                Console.ResetColor();
+                var input = Console.ReadLine();
+                // Prompt again if the input wasn't an integer
+                if (!int.TryParse(input, out choice)) continue;
+                switch (choice)
+                {
+                    case 1:
+                        Controller.PrintAllMembers();
+                        break;
+                    case 2:
+                        Controller.PrintAllProviders();
+                        break;
+                    case 3:
+                        Controller.PrintAllManagers();
+                        break;
+                    case 4:
+                        Controller.PrintAllServices();
+                        break;
+                    case 5:
+                        Controller.PrintAllConsultations();
+                        break;
+                    case 6:
+                        Controller.CreateMember();
+                        break;
+                    case 7:
+                        Controller.CreateProvider();
+                        break;
+                    case 8:
+                        Controller.CreateManager();
+                        break;
+                    case 9:
+                        Controller.CreateConsultation();
+                        break;
+                    case 10:
+                        Controller.ClearUserData();
+                        break;
+                    case 11:
+                        Controller.SeedUserData();
+                        break;
+                    default:
+                        break;
+                }
+                System.Console.WriteLine();
+
+            } while (choice != 0);
+        }
+
+        public static void PrintError(string message = "Error")
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(message);
+            Console.ResetColor();
+        }
 
         /**
          * Use the validation annotations on a model to get valid inputs from
@@ -27,17 +115,19 @@ namespace ChocAn
          */
         protected static string ReadValidStringFor(object modelInstance, string propertyName)
         {
-            String value;
+            string value;
             bool valid = false;
             var context = new ValidationContext(modelInstance) { MemberName = propertyName };
-            do {
+            do
+            {
                 // Use the property's name to prompt the user
                 Console.Write(string.Format("{0}: ", propertyName));
                 value = Console.ReadLine();
                 // Validate the property
                 var results = new List<ValidationResult>();
                 valid = Validator.TryValidateProperty(value, context, results);
-                foreach (var result in results) {
+                foreach (var result in results)
+                {
                     // Print the error messages from any failed validations for the user
                     Console.WriteLine(result);
                 }
@@ -115,16 +205,23 @@ namespace ChocAn
             return (Provider) ReadUser(new Provider());
         }
 
+        public static Manager ReadManager()
+        {
+            return (Manager) ReadUser(new Manager());
+        }
+
         public static Provider ReadProviderById()
         {
             Provider provider = null;
-            do {
+            do
+            {
                 Console.Write("Enter your provider ID number: ");
                 int id;
                 if (!int.TryParse(Console.ReadLine(), out id)) continue;
                 provider = Provider.Collection.FindById(id);
-                if (provider == null) {
-                    Console.WriteLine("Couldn't find a provider with that ID.");
+                if (provider == null)
+                {
+                    Console.WriteLine("Couldn't find a provider with that ID number.");
                 }
             } while (provider == null);
             return provider;
@@ -133,27 +230,48 @@ namespace ChocAn
         public static Member ReadMemberById()
         {
             Member member = null;
-            do {
+            do
+            {
                 Console.Write("Enter the member ID number: ");
                 int id;
                 if (!int.TryParse(Console.ReadLine(), out id)) continue;
                 member = Member.Collection.FindById(id);
-                if (member == null) {
-                    Console.WriteLine("Couldn't find a member with that ID.");
+                if (member == null)
+                {
+                    Console.WriteLine("Couldn't find a member with that ID number.");
                 }
             } while (member == null);
             return member;
         }
 
+        public static Manager ReadManagerById()
+        {
+            Manager manager = null;
+            do
+            {
+                Console.Write("Enter the manager ID number: ");
+                int id;
+                if (!int.TryParse(Console.ReadLine(), out id)) continue;
+                manager = Manager.Collection.FindById(id);
+                if (manager == null)
+                {
+                    Console.WriteLine("Couldn't find a manager with that ID number");
+                }
+            } while (manager == null);
+            return manager;
+        }
+
         public static Service ReadServiceById()
         {
             Service service = null;
-            do {
+            do
+            {
                 Console.Write("Enter the service ID number: ");
                 int id;
                 if (!int.TryParse(Console.ReadLine(), out id)) continue;
                 service = Service.Collection.FindById(id);
-                if (service == null) {
+                if (service == null)
+                {
                     Console.WriteLine("Couldn't find a service with that ID.");
                 }
             } while (service == null);
@@ -164,12 +282,12 @@ namespace ChocAn
         {
             string dateString;
             DateTime date;
-            do {
+            do
+            {
                 Console.Write(prompt + " (MM-DD-YYYY): ");
                 dateString = Console.ReadLine();
-            } while (!DateTime.TryParseExact(
-                    dateString, "MM-dd-yyyy", EnUs, DateTimeStyles.None, out date)
-            );
+            } while (!DateTime.TryParseExact(dateString, "MM-dd-yyyy",
+                        EnUs, DateTimeStyles.None, out date));
             return date;
         }
 
@@ -179,7 +297,8 @@ namespace ChocAn
          */
         public static void PrintAll(IEnumerable<BaseModel> items)
         {
-            foreach (var item in items) {
+            foreach (var item in items)
+            {
                 item.Print();
             }
         }
