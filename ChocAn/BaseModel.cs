@@ -6,7 +6,7 @@ namespace ChocAn
 {
     public abstract class BaseModel
     {
-        //  Database connection - All models use this internally
+        // Database connection - All models use this internally
         protected static LiteDatabase DB = new LiteDatabase("data.db");
 
         // All models should define a default print function

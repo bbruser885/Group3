@@ -6,7 +6,7 @@ namespace ChocAn
   public class Consultation : BaseModel
   {
     public DateTime Date { get; set; }
-    public DateTime Created { get; }
+    public DateTime Created { get; set; }
     public Service ServiceRecord { get; set; }
     public Member MemberRecord { get; set; }
     public Provider ProviderRecord { get; set; }
