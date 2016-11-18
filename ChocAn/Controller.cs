@@ -1,58 +1,49 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 
 namespace ChocAn
 {
-    public class Controller
+    public sealed class Controller
     {
+        private static readonly Controller SingleInstance = new Controller();
 
-        public static void PrintAllProviders()
-		{
-            View.PrintAll(Provider.Collection.FindAll());
-        }
+        private static readonly View View = new View();
 
-        public static void PrintAllMembers()
-		{
-            View.PrintAll(Member.Collection.FindAll());
-        }
+        static Controller() { }
 
-        public static void PrintAllManagers()
-		{
-            View.PrintAll(Manager.Collection.FindAll());
-        }
+        public static Controller Instance => SingleInstance;
 
-        public static void PrintAllServices()
-		{
-            View.PrintAll(Service.Collection.FindAll());
-        }
+        private BaseUser _currentUser = null;
 
-        public static void PrintAllConsultations()
-		{
-            View.PrintAll(Consultation.Collection.FindAll());
-        }
+        public BaseUser GetCurrentUser() => _currentUser;
 
-        public static void CreateMember()
-		{
-            Member.Collection.Insert(View.ReadMember());
-        }
-
-        public static void CreateProvider()
-		{
-            Provider.Collection.Insert(View.ReadProvider());
-        }
-
-        public static void CreateManager()
+        public void Run()
         {
-            Manager.Collection.Insert(View.ReadManager());
+            while (_currentUser == null)
+            {
+                var type = View.LoginMenu();
+                if (type == null) Environment.Exit(0);
+                var userId = View.ReadInt($"Enter your {type.Name} ID to log in");
+                _currentUser = (type == typeof(Manager) ?
+                    Manager.Collection.FindById(userId) :
+                    Provider.Collection.FindById(userId));
+                if (_currentUser == null)
+                {
+                    View.PrintError($"Invalid {type.Name} ID.");
+                }
+                else
+                {
+                    View.MainMenu();
+                    _currentUser = null;
+                }
+            }
         }
 
-        public static void CreateConsultation()
+        public void CreateConsultation()
 		{
-            Provider provider = View.ReadProviderById();
-            Member member = View.ReadMemberById();
-            Service service = View.ReadServiceById();
-            DateTime date = View.ReadDateTime("Date of consultation");
+            var provider = View.ReadProviderById();
+            var member = View.ReadMemberById();
+            var service = View.ReadServiceById();
+            var date = View.ReadDateTime("Date of consultation");
             Consultation.Collection.Insert(new Consultation {
                 ProviderRecord = provider,
                 MemberRecord = member,
@@ -61,8 +52,37 @@ namespace ChocAn
             });
         }
 
+        public void RequestDirectory()
+        {
+            View.PrintError("Not implemented yet.");
+        }
 
-        public static void ClearUserData()
+        public void RunReport()
+        {
+            View.PrintError("Not implemented yet.");
+        }
+
+        public void RunAllReports()
+        {
+            View.PrintError("Not implemented yet.");
+        }
+
+        public void CreateUser()
+        {
+            View.PrintError("Not implemented yet.");
+        }
+
+        public void EditUser()
+        {
+            View.PrintError("Not implemented yet.");
+        }
+
+        public void DeleteUser()
+        {
+            View.PrintError("Not implemented yet.");
+        }
+
+        public void ClearUserData()
         {
             BaseModel.ClearUserData();
         }
@@ -70,7 +90,7 @@ namespace ChocAn
         /**
          * Test method: Seed the database with some fake user data
          */
-        public static void SeedUserData()
+        public void SeedUserData()
 		{
             Member.Collection.Insert(new Member {
                     Name = "Howard Price",

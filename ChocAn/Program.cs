@@ -10,7 +10,7 @@ namespace ChocAn
             // Initialize the database with the service catalog data
             BaseModel.InitializeDatabase();
             Console.Clear();
-            View.MainMenuLoop();
+            Controller.Instance.Run();
             Environment.Exit(0);
         }
     }

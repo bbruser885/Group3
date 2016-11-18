@@ -2,92 +2,54 @@
 using System.Globalization;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace ChocAn
 {
-    public class View
+    public sealed class View
     {
+        private static readonly Controller Controller = Controller.Instance;
+
         private static readonly CultureInfo EnUs = new CultureInfo("en-US");
 
-        private static readonly string[] MenuOptions = {
-            "Display all members",
-            "Display all providers",
-            "Display all managers",
-            "Display all services",
-            "Display all consultations",
-            "Add a member",
-            "Add a provider",
-            "Add a manager",
-            "Create a consultation",
-            "Empty all user data",
-            "Seed the database with some fake user data"
+        private readonly List<KeyValuePair<string, Action>> _providerMenuOptions = new List<KeyValuePair<string, Action>>
+        {
+            new KeyValuePair<string, Action>("Enter a consultation", Controller.Instance.CreateConsultation),
+            new KeyValuePair<string, Action>("Request a copy of the Provider Directory", Controller.Instance.RequestDirectory),
         };
 
-        private static void PrintMenuOptions()
+        private readonly List<KeyValuePair<string, Action>> _managerMenuOptions = new List<KeyValuePair<string, Action>>
+        {
+            new KeyValuePair<string, Action>("Run a report", Controller.RunReport),
+            new KeyValuePair<string, Action>("Run all reports", Controller.RunAllReports),
+            new KeyValuePair<string, Action>("Create a new user", Controller.CreateUser),
+            new KeyValuePair<string, Action>("Edit a user record", Controller.EditUser),
+            new KeyValuePair<string, Action>("Delete a user record", Controller.DeleteUser),
+        };
+
+        private List<KeyValuePair<string, Action>> GetMenuOptions()
+        {
+            if (Controller.GetCurrentUser().GetType() == typeof(Manager))
+            {
+                return _providerMenuOptions.Concat(_managerMenuOptions).ToList();
+            }
+            else
+            {
+                return _providerMenuOptions;
+            }
+        }
+
+        private void PrintMenu(IReadOnlyList<KeyValuePair<string, Action>> menuOptions)
         {
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine("-- ChocAn Menu ------------------------------");
             Console.ResetColor();
-            for (int i = 0; i < MenuOptions.Length; i++)
+
+            for (var i = 0; i < menuOptions.Count; i++)
             {
-                Console.WriteLine(string.Format("{0}. {1}", i+1, MenuOptions[i]));
+                Console.WriteLine($"{i + 1}. {menuOptions[i].Key}");
             }
-            Console.WriteLine("0. Quit");
-        }
-
-        public static void MainMenuLoop()
-        {
-            int choice;
-            do
-            {
-                PrintMenuOptions();
-                Console.ForegroundColor = ConsoleColor.Blue;
-                Console.Write("Your choice: ");
-                Console.ResetColor();
-                var input = Console.ReadLine();
-                // Prompt again if the input wasn't an integer
-                if (!int.TryParse(input, out choice)) continue;
-                switch (choice)
-                {
-                    case 1:
-                        Controller.PrintAllMembers();
-                        break;
-                    case 2:
-                        Controller.PrintAllProviders();
-                        break;
-                    case 3:
-                        Controller.PrintAllManagers();
-                        break;
-                    case 4:
-                        Controller.PrintAllServices();
-                        break;
-                    case 5:
-                        Controller.PrintAllConsultations();
-                        break;
-                    case 6:
-                        Controller.CreateMember();
-                        break;
-                    case 7:
-                        Controller.CreateProvider();
-                        break;
-                    case 8:
-                        Controller.CreateManager();
-                        break;
-                    case 9:
-                        Controller.CreateConsultation();
-                        break;
-                    case 10:
-                        Controller.ClearUserData();
-                        break;
-                    case 11:
-                        Controller.SeedUserData();
-                        break;
-                    default:
-                        break;
-                }
-                System.Console.WriteLine();
-
-            } while (choice != 0);
+            Console.WriteLine("0. Log out");
         }
 
         public static void PrintError(string message = "Error")
@@ -95,6 +57,56 @@ namespace ChocAn
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(message);
             Console.ResetColor();
+        }
+
+        public static void PrintPrompt(string prompt)
+        {
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.Write($"{prompt}: ");
+            Console.ResetColor();
+        }
+
+        public Type LoginMenu()
+        {
+            int choice;
+            do
+            {
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine("-- ChocAn Login -----------------------------");
+                Console.ResetColor();
+                Console.WriteLine("1. Log in as a provider");
+                Console.WriteLine("2. Log in as a manager");
+                Console.WriteLine("0. Quit");
+                choice = ReadInt("Your choice");
+            } while (choice < 0 || choice > 2);
+            switch (choice)
+            {
+                case 1:
+                    return typeof(Provider);
+                case 2:
+                    return typeof(Manager);
+                default:
+                    return null;
+            }
+        }
+
+        public void MainMenu()
+        {
+            int choice;
+            Console.WriteLine();
+            do
+            {
+                var menuOptions = GetMenuOptions();
+                PrintMenu(menuOptions);
+                PrintPrompt("Your choice");
+                var input = Console.ReadLine();
+                if (!int.TryParse(input, out choice) ||
+                    !Enumerable.Range(1, menuOptions.Count).Contains(choice) ) continue;
+                menuOptions[choice-1].Value();
+                Console.WriteLine();
+
+            } while (choice != 0);
+            Console.WriteLine();
         }
 
         /**
@@ -113,7 +125,7 @@ namespace ChocAn
          *    m.Name = ReadValidStringFor(m, "Name");
          *    // m now has a Name string meeting any validation requirements
          */
-        protected static string ReadValidStringFor(object modelInstance, string propertyName)
+        private static string ReadValidStringFor(object modelInstance, string propertyName)
         {
             string value;
             bool valid = false;
@@ -121,7 +133,7 @@ namespace ChocAn
             do
             {
                 // Use the property's name to prompt the user
-                Console.Write(string.Format("{0}: ", propertyName));
+                PrintPrompt($"{propertyName}: ");
                 value = Console.ReadLine();
                 // Validate the property
                 var results = new List<ValidationResult>();
@@ -151,7 +163,7 @@ namespace ChocAn
          *    m.Name = ReadValidIntFor(m, "Age");
          *    // m now has an Age integer meeting any validation requirements
          */
-        protected static int ReadValidIntFor(object modelInstance, string propertyName)
+        private static int ReadValidIntFor(object modelInstance, string propertyName)
         {
             int value;
             bool valid = false;
@@ -183,7 +195,7 @@ namespace ChocAn
          *
          * Returns: an initialized instance of the type you passed in
          */
-        protected static BaseUser ReadUser(BaseUser user) {
+        private static BaseUser ReadUser(BaseUser user) {
             Console.WriteLine();
 
             user.Name = ReadValidStringFor(user, "Name");
@@ -195,27 +207,27 @@ namespace ChocAn
             return user;
         }
 
-        public static Member ReadMember()
+        public Member ReadMember()
         {
             return (Member) ReadUser(new Member());
         }
 
-        public static Provider ReadProvider()
+        public Provider ReadProvider()
         {
             return (Provider) ReadUser(new Provider());
         }
 
-        public static Manager ReadManager()
+        public Manager ReadManager()
         {
             return (Manager) ReadUser(new Manager());
         }
 
-        public static Provider ReadProviderById()
+        public Provider ReadProviderById()
         {
             Provider provider = null;
             do
             {
-                Console.Write("Enter your provider ID number: ");
+                PrintPrompt("Enter your provider ID number");
                 int id;
                 if (!int.TryParse(Console.ReadLine(), out id)) continue;
                 provider = Provider.Collection.FindById(id);
@@ -227,75 +239,88 @@ namespace ChocAn
             return provider;
         }
 
-        public static Member ReadMemberById()
+        public Member ReadMemberById()
         {
             Member member = null;
             do
             {
-                Console.Write("Enter the member ID number: ");
+                PrintPrompt("Enter the member ID number");
                 int id;
                 if (!int.TryParse(Console.ReadLine(), out id)) continue;
                 member = Member.Collection.FindById(id);
                 if (member == null)
                 {
-                    Console.WriteLine("Couldn't find a member with that ID number.");
+                    PrintError("Couldn't find a member with that ID number.");
                 }
             } while (member == null);
             return member;
         }
 
-        public static Manager ReadManagerById()
+        public Manager ReadManagerById()
         {
             Manager manager = null;
             do
             {
-                Console.Write("Enter the manager ID number: ");
+                PrintPrompt("Enter the manager ID number");
                 int id;
                 if (!int.TryParse(Console.ReadLine(), out id)) continue;
                 manager = Manager.Collection.FindById(id);
                 if (manager == null)
                 {
-                    Console.WriteLine("Couldn't find a manager with that ID number");
+                    PrintError("Couldn't find a manager with that ID number");
                 }
             } while (manager == null);
             return manager;
         }
 
-        public static Service ReadServiceById()
+        public Service ReadServiceById()
         {
             Service service = null;
             do
             {
-                Console.Write("Enter the service ID number: ");
+                PrintPrompt("Enter the service ID number");
                 int id;
                 if (!int.TryParse(Console.ReadLine(), out id)) continue;
                 service = Service.Collection.FindById(id);
                 if (service == null)
                 {
-                    Console.WriteLine("Couldn't find a service with that ID.");
+                    PrintError("Couldn't find a service with that ID.");
                 }
             } while (service == null);
             return service;
         }
 
-        public static DateTime ReadDateTime(string prompt = "Enter a date")
+        public DateTime ReadDateTime(string prompt = "Enter a date")
         {
             string dateString;
             DateTime date;
             do
             {
-                Console.Write(prompt + " (MM-DD-YYYY): ");
+                PrintPrompt(prompt + " (MM-DD-YYYY): ");
                 dateString = Console.ReadLine();
             } while (!DateTime.TryParseExact(dateString, "MM-dd-yyyy",
                         EnUs, DateTimeStyles.None, out date));
             return date;
         }
 
+
+        public int ReadInt(string prompt = "Enter a number")
+        {
+            int id;
+            string input;
+            do
+            {
+                PrintPrompt(prompt);
+                input = Console.ReadLine();
+            } while (!int.TryParse(input, out id));
+            return id;
+        }
+
         /**
          * Calls the print function on some set of models, e.g. a resultset
          * produced by Collection.FindAll()
          */
-        public static void PrintAll(IEnumerable<BaseModel> items)
+        public void PrintAll(IEnumerable<BaseModel> items)
         {
             foreach (var item in items)
             {

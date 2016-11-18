@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using LiteDB;
 
 namespace ChocAn
 {
