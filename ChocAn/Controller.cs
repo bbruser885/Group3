@@ -110,35 +110,40 @@ namespace ChocAn
                     Street = "1373 Armistice Circle",
                     City = "Memphis",
                     State = "TN",
-                    Zip = 38161
+                    Zip = 38161,
+                    Id = 001,
                     });
             Member.Collection.Insert(new Member {
                     Name = "Robin Smith",
                     Street = "94565 Sundown Ct",
                     City = "Las Vegas",
                     State = "NV",
-                    Zip = 89105
+                    Zip = 89105,
+                    Id = 002,
                     });
             Member.Collection.Insert(new Member {
                     Name = "Donna Hernandez",
                     Street = "9 Nancy St",
                     City = "Dayton",
                     State = "OH",
-                    Zip = 45414
+                    Zip = 45414,
+                    Id = 003,
                     });
             Provider.Collection.Insert(new Provider {
                     Name = "Phillip Parker",
                     Street = "982 Express Point",
                     City = "Austin",
                     State = "TX",
-                    Zip = 78710
+                    Zip = 78710,
+                    Id = 1234,
                     });
             Provider.Collection.Insert(new Provider {
                     Name = "Diana Brown",
                     Street = "2157 Moose Crossing",
                     City = "Muskegon",
                     State = "MI",
-                    Zip = 49444
+                    Zip = 49444,
+                    Id = 4321,
                     });
         }
     }
