@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text;
 
 namespace ChocAn
 {
@@ -66,7 +67,7 @@ namespace ChocAn
             Console.ResetColor();
         }
 
-        public Type LoginMenu()
+        public LogInOptions LoginMenu()
         {
             int choice;
             do
@@ -76,17 +77,20 @@ namespace ChocAn
                 Console.ResetColor();
                 Console.WriteLine("1. Log in as a provider");
                 Console.WriteLine("2. Log in as a manager");
+                Console.WriteLine("3. Seed Data");
                 Console.WriteLine("0. Quit");
                 choice = ReadInt("Your choice");
-            } while (choice < 0 || choice > 2);
+            } while (choice < 0 || choice > 3);
             switch (choice)
             {
                 case 1:
-                    return typeof(Provider);
+                    return LogInOptions.Provider;
                 case 2:
-                    return typeof(Manager);
+                    return LogInOptions.Manager;
+                case 3:
+                    return LogInOptions.SeedData;
                 default:
-                    return null;
+                    return LogInOptions.Exit;
             }
         }
 
@@ -325,6 +329,16 @@ namespace ChocAn
             foreach (var item in items)
             {
                 item.Print();
+            }
+        }
+
+        private void DumpDB(IEnumerable<BaseModel> items)
+        {
+            StringBuilder text = new StringBuilder();
+
+            foreach (var item in items)
+            {
+                text.Append(item.ToString());
             }
         }
     }

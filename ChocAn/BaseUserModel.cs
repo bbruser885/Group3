@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Text;
 
 namespace ChocAn
 {
@@ -21,18 +22,27 @@ namespace ChocAn
 
         public override void Print()
         {
-            Console.WriteLine();
-            Console.WriteLine (string.Format("= {0} =================", this.GetType().Name));
-            Console.WriteLine();
-            Console.WriteLine(string.Format("Id: {0}", Id));
-            Console.WriteLine(string.Format("Name: {0}", Name));
-            Console.WriteLine("Address:");
-            Console.WriteLine(string.Format("  Street: {0}", Street));
-            Console.WriteLine(string.Format("  City: {0}", City));
-            Console.WriteLine(string.Format("  State: {0}", State));
-            Console.WriteLine(string.Format("  Zip: {0}", Zip));
+            Console.Write(ToString());
         }
 
+        public override string ToString()
+        {
+            StringBuilder text = new StringBuilder();
+            var delimiter = "\n";
+
+            text.Append(delimiter);
+            text.Append(string.Format("= {0} =================" + delimiter, this.GetType().Name));
+            text.Append(delimiter);
+            text.Append(string.Format("Id: {0}" + delimiter, Id));
+            text.Append(string.Format("Name: {0}" + delimiter, Name));
+            text.Append("Address:" + delimiter);
+            text.Append(string.Format("  Street: {0}" + delimiter, Street));
+            text.Append(string.Format("  City: {0}" + delimiter, City));
+            text.Append(string.Format("  State: {0}" + delimiter, State));
+            text.Append(string.Format("  Zip: {0}" + delimiter, Zip));
+
+            return text.ToString();
+        }
     }
 
 }

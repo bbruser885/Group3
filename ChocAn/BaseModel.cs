@@ -11,6 +11,7 @@ namespace ChocAn
 
         // All models should define a default print function
         public abstract void Print();
+        public abstract override string ToString();
 
         // Bootstrap the DB
         public static void InitializeDatabase() {

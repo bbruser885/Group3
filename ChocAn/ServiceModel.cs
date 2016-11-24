@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using LiteDB;
+using System.Text;
 
 namespace ChocAn
 {
@@ -18,13 +19,26 @@ namespace ChocAn
         [Range(typeof(Double), "0", "999.99", ErrorMessage = "Fee must be between 0 and 999.99.")]
         public double Fee { get; set; }
 
-        public override void Print() {
-            Console.WriteLine();
-            Console.WriteLine ("= Service ==================");
-            Console.WriteLine(string.Format("Id: {0}", Id));
-            Console.WriteLine(string.Format("Name: {0}", Name));
-            Console.WriteLine(string.Format("Fee: {0:C}", Fee));
-            Console.WriteLine();
+ 
+
+        public override void Print()
+        {
+            Console.Write(ToString());
+        }
+
+        public override string ToString()
+        {
+           StringBuilder text = new StringBuilder();
+            var delimiter = "\n";
+
+            text.Append(delimiter);
+            text.Append(string.Format ("= Service ==================" + delimiter));
+            text.Append(string.Format(string.Format("Id: {0}" + delimiter, Id)));
+            text.Append(string.Format(string.Format("Name: {0}" + delimiter, Name)));
+            text.Append(string.Format(string.Format("Fee: {0:C}" + delimiter, Fee)));
+            text.Append(delimiter);
+
+            return text.ToString();
         }
     }
 }

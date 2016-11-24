@@ -20,20 +20,33 @@ namespace ChocAn
         {
             while (_currentUser == null)
             {
-                var type = View.LoginMenu();
-                if (type == null) Environment.Exit(0);
-                var userId = View.ReadInt($"Enter your {type.Name} ID to log in");
-                _currentUser = (type == typeof(Manager) ?
-                    Manager.Collection.FindById(userId) :
-                    Provider.Collection.FindById(userId));
-                if (_currentUser == null)
+                var loginOption = View.LoginMenu();
+
+                if (loginOption == LogInOptions.Exit)
                 {
-                    View.PrintError($"Invalid {type.Name} ID.");
+                    Environment.Exit(0);
+                }
+
+                if (loginOption == LogInOptions.SeedData)
+                {
+                    SingleInstance.SeedUserData();
                 }
                 else
                 {
-                    View.MainMenu();
-                    _currentUser = null;
+                    var userId = View.ReadInt($"Enter your {loginOption.GetString()} ID to log in");
+                    _currentUser = loginOption == LogInOptions.Manager ?
+                        Manager.Collection.FindById(userId) :
+                        Provider.Collection.FindById(userId);
+
+                    if (_currentUser == null)
+                    {
+                        View.PrintError($"Invalid {loginOption.GetString()} ID.");
+                    }
+                    else
+                    {
+                        View.MainMenu();
+                        _currentUser = null;
+                    }
                 }
             }
         }
