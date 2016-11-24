@@ -17,6 +17,7 @@ namespace ChocAn
         {
             new KeyValuePair<string, Action>("Enter a consultation", Controller.Instance.CreateConsultation),
             new KeyValuePair<string, Action>("Request a copy of the Provider Directory", Controller.Instance.RequestDirectory),
+
         };
 
         private readonly List<KeyValuePair<string, Action>> _managerMenuOptions = new List<KeyValuePair<string, Action>>
@@ -340,6 +341,7 @@ namespace ChocAn
             {
                 text.Append(item.ToString());
             }
+            System.IO.File.WriteAllText("databaseDump.txt", text.ToString());
         }
     }
 }
