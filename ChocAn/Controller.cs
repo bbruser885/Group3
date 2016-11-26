@@ -101,6 +101,10 @@ namespace ChocAn
             BaseModel.ClearUserData();
         }
 
+        public void ClearManagerData()
+        {
+            BaseModel.ClearManagerData();
+        }
         /**
          * Test method: Seed the database with some fake user data
          */

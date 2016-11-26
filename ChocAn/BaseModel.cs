@@ -43,5 +43,11 @@ namespace ChocAn
             DB.DropCollection("providers");
             DB.DropCollection("members");
         }
+
+        // Test method: Remove all manager data
+        public static void ClearManagerData()
+        {
+            DB.DropCollection("managers");     
+        }
     }
 }

@@ -30,6 +30,7 @@ namespace ChocAn
             new KeyValuePair<string, Action>("Edit a user record", Controller.EditUser),
             new KeyValuePair<string, Action>("Delete a user record", Controller.DeleteUser),
             new KeyValuePair<string, Action>("Dump Database(Debug)", DumpDBWrapper),
+            new KeyValuePair<string, Action>("Delete Database(Debug)", DeleteDB),
         };
 
         private List<KeyValuePair<string, Action>> GetMenuOptions()
@@ -353,6 +354,14 @@ namespace ChocAn
             }
             System.IO.File.AppendAllText("databaseDump.txt", text.ToString());
         }
+        
+        //Test Method: Delete all info in database
+        private static void DeleteDB()
+        {
+            Controller.ClearManagerData();
+            Controller.ClearUserData();
+        }
+
     }
 }
 
