@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Collections;
 
 namespace ChocAn
 {
@@ -17,6 +18,7 @@ namespace ChocAn
         {
             new KeyValuePair<string, Action>("Enter a consultation", Controller.Instance.CreateConsultation),
             new KeyValuePair<string, Action>("Request a copy of the Provider Directory", Controller.Instance.RequestDirectory),
+            new KeyValuePair<string, Action>("Dump Database(Debug)", DumpDBWrapper),
 
         };
 
@@ -27,6 +29,7 @@ namespace ChocAn
             new KeyValuePair<string, Action>("Create a new user", Controller.CreateUser),
             new KeyValuePair<string, Action>("Edit a user record", Controller.EditUser),
             new KeyValuePair<string, Action>("Delete a user record", Controller.DeleteUser),
+            new KeyValuePair<string, Action>("Dump Database(Debug)", DumpDBWrapper),
         };
 
         private List<KeyValuePair<string, Action>> GetMenuOptions()
@@ -333,7 +336,14 @@ namespace ChocAn
             }
         }
 
-        private void DumpDB(IEnumerable<BaseModel> items)
+        private static void DumpDBWrapper()
+        {
+            System.IO.File.Delete("databaseDump.txt");
+            DumpDB(Controller.getManagers());
+            DumpDB(Controller.getProviders());
+            DumpDB(Controller.getMembers());
+        }
+        private static void DumpDB(IEnumerable<BaseModel> items)
         {
             StringBuilder text = new StringBuilder();
 
@@ -341,7 +351,7 @@ namespace ChocAn
             {
                 text.Append(item.ToString());
             }
-            System.IO.File.WriteAllText("databaseDump.txt", text.ToString());
+            System.IO.File.AppendAllText("databaseDump.txt", text.ToString());
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ChocAn
 {
@@ -105,13 +106,13 @@ namespace ChocAn
          */
         public void SeedUserData()
 		{
+
             Member.Collection.Insert(new Member {
                     Name = "Howard Price",
                     Street = "1373 Armistice Circle",
                     City = "Memphis",
                     State = "TN",
                     Zip = 38161,
-                    Id = 001,
                     });
             Member.Collection.Insert(new Member {
                     Name = "Robin Smith",
@@ -119,7 +120,6 @@ namespace ChocAn
                     City = "Las Vegas",
                     State = "NV",
                     Zip = 89105,
-                    Id = 002,
                     });
             Member.Collection.Insert(new Member {
                     Name = "Donna Hernandez",
@@ -127,7 +127,6 @@ namespace ChocAn
                     City = "Dayton",
                     State = "OH",
                     Zip = 45414,
-                    Id = 003,
                     });
             Provider.Collection.Insert(new Provider {
                     Name = "Phillip Parker",
@@ -135,7 +134,6 @@ namespace ChocAn
                     City = "Austin",
                     State = "TX",
                     Zip = 78710,
-                    Id = 1234,
                     });
             Provider.Collection.Insert(new Provider {
                     Name = "Diana Brown",
@@ -143,9 +141,39 @@ namespace ChocAn
                     City = "Muskegon",
                     State = "MI",
                     Zip = 49444,
-                    Id = 4321,
+                    });
+            Manager.Collection.Insert(new Manager {
+                    Name = "Bob Dole",
+                    Street = "123 Fake sreet",
+                    City = "The Shire",
+                    State= "Hobbiton",
+                    Zip = 12313,
                     });
         }
+        
+        public IEnumerable<BaseModel> getManagers()
+        {
+            var col = Manager.Collection.FindAll();
+            
+            
+            return col;
+        }
+        public IEnumerable<BaseModel> getProviders()
+        {
+            var col = Provider.Collection.FindAll();
+
+
+            return col;
+        }
+        public IEnumerable<BaseModel> getMembers()
+        {
+            var col = Member.Collection.FindAll();
+
+
+            return col;
+        }
+
     }
+   
 }
 
