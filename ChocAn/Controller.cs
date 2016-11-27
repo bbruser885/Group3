@@ -58,12 +58,24 @@ namespace ChocAn
             var member = View.ReadMemberById();
             var service = View.ReadServiceById();
             var date = View.ReadDateTime("Date of consultation");
+		
+	    //Create an array of strings holding the consultation to write to file
+	    string[] consultation = {member.ToString(), 
+				     provider.ToString(), 
+				     service.ToString(), 
+				     date};
+		
+	    //Create a concultation object for the database collection and insert
             Consultation.Collection.Insert(new Consultation {
                 ProviderRecord = provider,
                 MemberRecord = member,
                 ServiceRecord = service,
                 Date = date
             });
+	    //Consultation was created, Write copy to file
+	    writeConsultationToFile(consultation);
+		
+		
         }
 
         public void RequestDirectory()
@@ -105,6 +117,44 @@ namespace ChocAn
         {
             BaseModel.ClearManagerData();
         }
+	
+	//=====================================================================
+        //Function Name: GetTimestamp
+        //Description: This function pull data from a DateTime object and
+        //create a string that can be used for a file name.
+        //Input: value (DateTime)
+        //Output: string
+        //Last Updated: 11.26.2016
+        //=====================================================================
+        public static String GetTimestamp(DateTime value)
+        {
+            return value.ToString("yyyyMMddHHmmssffff");
+        }    
+	    
+	//=========================================================================
+	//Function Name: writeConsultationToFile
+	//Description: This function will take an array of strings that hold the
+	//the information for a consultation that has been created. This function
+	//will take the data and write it to file in a prediscussed format.
+	//The designated filepath will be: @Group3/ChocAn/consultationFiles/
+	//Input: consultation (string[])
+	//Output: none for now.
+	//Last updated: 11.26.2016 16:09
+	//=========================================================================
+	public void writeConsultationToFile(string[] consultation)
+	{
+		//create the file name for the consultation
+		string currentTime = GetTimestamp(DateTime.now);
+		string fileName = "consultation" +
+			consultaion[0] +
+			currentTime +
+			".txt";
+		
+		//Create unique file for a consultation in the designated
+		//file directory
+		System.IO.File.WriteAllLines(@"Group3/ChocAn/consultationFiles/" + fileName , consultation);
+	}
+	
         /**
          * Test method: Seed the database with some fake user data
          */
