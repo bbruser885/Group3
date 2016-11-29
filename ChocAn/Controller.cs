@@ -1,11 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace ChocAn
 {
     public sealed class Controller
     {
+        private static readonly string BaseDir = AppDomain.CurrentDomain.BaseDirectory;
+        private static readonly string ReportsDir = BaseDir + "reports";
+        private const string DateFormat = "MM-dd-yyyy";
+
         private static readonly Controller SingleInstance = new Controller();
 
         private static readonly View View = new View();
@@ -87,7 +94,73 @@ namespace ChocAn
             View.PrintError("Not implemented yet.");
         }
 
-        public void RunReport()
+        public void RunMemberReport()
+        {
+            var start = DateTime.Now.Subtract(TimeSpan.FromDays(7));
+            var end = DateTime.Now;
+
+            var FriendlyDateFormat = $"dddd {DateFormat}";
+            Console.WriteLine("Producing member reports for {0} through {1}",
+                start.ToString(FriendlyDateFormat),
+                end.ToString(FriendlyDateFormat)
+            );
+
+            var memberConsultations = Consultation.Collection.Find(c =>
+                c.Date > start && c.Date < end
+            ).OrderBy(
+                c => c.MemberRecord.Name
+            ).GroupBy(
+                c => c.MemberRecord
+            );
+
+            var memberDirectory = ReportsDir + "\\member";
+            Directory.CreateDirectory(memberDirectory);
+
+            var total = 0;
+            var memberConsultationCount = 1;
+            foreach (var group in memberConsultations)
+            {
+                var member = group.Key;
+                var output = new StringBuilder();
+                output.Append(member);
+                output.Append(Environment.NewLine);
+                output.Append(string.Format(
+                    "Services received during the week {0} through {1}:",
+                    start.ToString(DateFormat),
+                    end.ToString(DateFormat)
+                ));
+                foreach (var consultation in group)
+                {
+                    output.Append(Environment.NewLine);
+                    output.Append($"  Date: {consultation.Date.ToString(DateFormat)}");
+                    output.Append(Environment.NewLine);
+                    output.Append($"  Provider: {consultation.ProviderRecord.Name}");
+                    output.Append(Environment.NewLine);
+                    output.Append($"  Name: {consultation.ServiceRecord.Name}");
+                    output.Append(Environment.NewLine);
+                }
+                var filename = Regex.Replace(member.Name, @"\s+", "") +
+                               end.ToString(DateFormat) +
+                               ".txt";
+                var path = $"{memberDirectory}/{filename}";
+                File.WriteAllText(path, output.ToString());
+                total++;
+            }
+
+            Console.WriteLine($"Wrote {total} member reports to {memberDirectory}");
+        }
+
+        public void RunProviderReport()
+        {
+            View.PrintError("Not implemented yet.");
+        }
+
+        public void RunAPReport()
+        {
+            View.PrintError("Not implemented yet.");
+        }
+
+        public void RunEFTReport()
         {
             View.PrintError("Not implemented yet.");
         }

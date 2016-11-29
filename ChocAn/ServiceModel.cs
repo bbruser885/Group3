@@ -29,14 +29,16 @@ namespace ChocAn
         public override string ToString()
         {
            StringBuilder text = new StringBuilder();
-            var delimiter = "\n";
 
-            text.Append(delimiter);
-            text.Append(string.Format ("= Service ==================" + delimiter));
-            text.Append(string.Format(string.Format("Id: {0}" + delimiter, Id)));
-            text.Append(string.Format(string.Format("Name: {0}" + delimiter, Name)));
-            text.Append(string.Format(string.Format("Fee: {0:C}" + delimiter, Fee)));
-            text.Append(delimiter);
+           text.Append(Environment.NewLine);
+           text.Append("= Service ==================");
+           text.Append(Environment.NewLine);
+           text.Append(string.Format($"Id: {Id}"));
+           text.Append(Environment.NewLine);
+           text.Append(string.Format($"Name: {Name}"));
+           text.Append(Environment.NewLine);
+           text.Append(string.Format($"Fee: {Fee:C}"));
+           text.Append(Environment.NewLine);
 
             return text.ToString();
         }

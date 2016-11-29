@@ -28,18 +28,24 @@ namespace ChocAn
         public override string ToString()
         {
             StringBuilder text = new StringBuilder();
-            var delimiter = "\n";
 
-            text.Append(delimiter);
-            text.Append(string.Format("= {0} =================" + delimiter, this.GetType().Name));
-            text.Append(delimiter);
-            text.Append(string.Format("Id: {0}" + delimiter, Id));
-            text.Append(string.Format("Name: {0}" + delimiter, Name));
-            text.Append("Address:" + delimiter);
-            text.Append(string.Format("  Street: {0}" + delimiter, Street));
-            text.Append(string.Format("  City: {0}" + delimiter, City));
-            text.Append(string.Format("  State: {0}" + delimiter, State));
-            text.Append(string.Format("  Zip: {0}" + delimiter, Zip));
+            text.Append($"= {Name} =================");
+            text.Append(Environment.NewLine);
+            text.Append(Environment.NewLine);
+            text.Append($"Id: {Id}");
+            text.Append(Environment.NewLine);
+            text.Append($"Name: {Name}");
+            text.Append(Environment.NewLine);
+            text.Append("Address:");
+            text.Append(Environment.NewLine);
+            text.Append($"  Street: {Street}");
+            text.Append(Environment.NewLine);
+            text.Append($"  City: {City}");
+            text.Append(Environment.NewLine);
+            text.Append($"  State: {State}");
+            text.Append(Environment.NewLine);
+            text.Append($"  Zip: {Zip}");
+            text.Append(Environment.NewLine);
 
             return text.ToString();
         }

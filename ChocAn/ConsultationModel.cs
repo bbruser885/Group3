@@ -27,15 +27,19 @@ namespace ChocAn
         public override string ToString()
         {
             StringBuilder text = new StringBuilder();
-            var delimiter = "\n";
 
-            text.Append(delimiter);
             text.Append("= Consultation =============");
-            text.Append(string.Format("Provider: {0}", ProviderRecord.Name));
-            text.Append(string.Format("Member: {0}", MemberRecord.Name));
-            text.Append(string.Format("Service: {0}", ServiceRecord.Name));
-            text.Append(string.Format("Consultaion Date: {0}", Date.ToString("MM-dd-yyyy")));
-            text.Append(string.Format("Record Created: {0}", Created));
+            text.Append(Environment.NewLine);
+            text.Append($"Provider: {ProviderRecord.Name}");
+            text.Append(Environment.NewLine);
+            text.Append($"Member: {MemberRecord.Name}");
+            text.Append(Environment.NewLine);
+            text.Append($"Service: {ServiceRecord.Name}");
+            text.Append(Environment.NewLine);
+            text.Append($"Date: {Date:MM-dd-yyyy}");
+            text.Append(Environment.NewLine);
+            text.Append($"Record Created: {Created}");
+            text.Append(Environment.NewLine);
 
             return text.ToString();
         }

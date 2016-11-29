@@ -23,7 +23,7 @@ namespace ChocAn
 
         private readonly List<KeyValuePair<string, Action>> _managerMenuOptions = new List<KeyValuePair<string, Action>>
         {
-            new KeyValuePair<string, Action>("Run a report", Controller.RunReport),
+            new KeyValuePair<string, Action>("Run a report", ReportMenu),
             new KeyValuePair<string, Action>("Run all reports", Controller.RunAllReports),
             new KeyValuePair<string, Action>("Create a new user", Controller.CreateUser),
             new KeyValuePair<string, Action>("Edit a user record", Controller.EditUser),
@@ -109,12 +109,44 @@ namespace ChocAn
                 PrintPrompt("Your choice");
                 var input = Console.ReadLine();
                 if (!int.TryParse(input, out choice) ||
-                    !Enumerable.Range(1, menuOptions.Count).Contains(choice) ) continue;
+                    !Enumerable.Range(1, menuOptions.Count).Contains(choice)) continue;
                 menuOptions[choice-1].Value();
                 Console.WriteLine();
 
             } while (choice != 0);
             Console.WriteLine();
+        }
+
+        public static void ReportMenu()
+        {
+            int choice;
+            do
+            {
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine("-- Run a Report -----------------------------");
+                Console.ResetColor();
+                Console.WriteLine("1. Member Report");
+                Console.WriteLine("2. Provider Report");
+                Console.WriteLine("3. AP Report");
+                Console.WriteLine("4. EFT Report");
+                Console.WriteLine("0. Cancel");
+                choice = ReadInt("Your choice");
+            } while (choice < 0 || choice > 4);
+            switch (choice)
+            {
+                case 1:
+                    Controller.RunMemberReport();
+                    break;
+                case 2:
+                    Controller.RunProviderReport();
+                    break;
+                case 3:
+                    Controller.RunAPReport();
+                    break;
+                case 4:
+                    Controller.RunEFTReport();
+                    break;
+            }
         }
 
         /**
@@ -312,7 +344,7 @@ namespace ChocAn
         }
 
 
-        public int ReadInt(string prompt = "Enter a number")
+        public static int ReadInt(string prompt = "Enter a number")
         {
             int id;
             string input;
