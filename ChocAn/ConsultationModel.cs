@@ -4,18 +4,20 @@ using System.Text;
 
 namespace ChocAn
 {
-  public class Consultation : BaseModel
-  {
-    public DateTime Date { get; set; }
-    public DateTime Created { get; set; }
-    public Service ServiceRecord { get; set; }
-    public Member MemberRecord { get; set; }
-    public Provider ProviderRecord { get; set; }
+    public class Consultation : BaseModel
+    {
+        [BsonIndex]
+        public int Id { get; set; }
+        public DateTime Date { get; set; }
+        public DateTime Created { get; set; }
+        public Service ServiceRecord { get; set; }
+        public Member MemberRecord { get; set; }
+        public Provider ProviderRecord { get; set; }
 
-    // Automatically set the creation date to now when adding a new consultation
-    public Consultation() {
-      Created = DateTime.Now;
-    }
+        // Automatically set the creation date to now when adding a new consultation
+        public Consultation() {
+          Created = DateTime.Now;
+        }
 
         public override void Print()
         {
@@ -40,10 +42,10 @@ namespace ChocAn
 
         // `Consultation.Collection` is a LiteDB collection of members
         public static LiteCollection<Consultation> Collection =
-       DB.GetCollection<Consultation>("consultation")
-      .Include(x => x.MemberRecord)
-      .Include(x => x.ProviderRecord)
-      .Include(x => x.ServiceRecord);
-  }
+            DB.GetCollection<Consultation>("consultation")
+                .Include(x => x.MemberRecord)
+                .Include(x => x.ProviderRecord)
+                .Include(x => x.ServiceRecord);
+    }
 }
 
