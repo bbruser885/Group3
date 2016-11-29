@@ -212,7 +212,69 @@ namespace ChocAn
 
         public void RunAPReport()
         {
-            View.PrintError("Not implemented yet.");
+            var totalProvider = 0;
+            var totalFees = 0.0;
+            var sumProvider = 0;
+            var sumFees = 0.0;
+            var start = DateTime.Now.Subtract(TimeSpan.FromDays(7));
+            var end = DateTime.Now;
+
+            var FriendlyDateFormat = $"dddd {DateFormat}";
+            Console.WriteLine("Producing AP report for {0} through {1}",
+                start.ToString(FriendlyDateFormat),
+                end.ToString(FriendlyDateFormat)
+            );
+
+            var providerConsultations = Consultation.Collection.Find(c =>
+                       c.Date > start && c.Date < end
+           ).OrderBy(
+               c => c.ProviderRecord.Name
+           ).GroupBy(
+               c => c.ProviderRecord
+           );
+
+            var APdirectory = ReportsDir + "\\APSummary";
+            Directory.CreateDirectory(APdirectory);
+            var fileName = "ApSummary" + end.ToString(DateFormat) + ".txt";
+            var path = $"{APdirectory}/{fileName}";
+            foreach (var group in providerConsultations)
+            {
+                var provider = group.Key;
+                var output = new StringBuilder();
+                output.Append(provider);
+                output.Append(Environment.NewLine);
+                output.Append(string.Format(
+                    "Consultations and Fees provided during the week {0} through {1}:",
+                    start.ToString(DateFormat),
+                    end.ToString(DateFormat)
+                ));
+                foreach (var consultation in group)
+                {
+                    totalProvider = totalProvider + 1;
+                    totalFees = totalFees + consultation.ServiceRecord.Fee;
+                }
+                output.Append($"  Number of Consultations: {totalProvider}");
+                output.Append(Environment.NewLine);
+                output.Append($"  Total Fees: {totalFees}");
+                output.Append(Environment.NewLine);
+                output.Append(Environment.NewLine);
+
+                
+                File.AppendAllText(path, output.ToString());
+                sumProvider = sumProvider + 1;
+                sumFees = sumFees + totalFees;
+                totalProvider = 0;
+                totalFees = 0.0;
+            }
+
+            File.AppendAllText(path, "Total Number of Providers: ");
+            File.AppendAllText(path, sumProvider.ToString());
+            File.AppendAllText(path, "\n");
+            File.AppendAllText(path, "Total sum of Fees: ");
+            File.AppendAllText(path, sumFees.ToString());
+            File.AppendAllText(path, "\n");
+
+            // View.PrintError("Not implemented yet.");
         }
 
         public void RunEFTReport()
