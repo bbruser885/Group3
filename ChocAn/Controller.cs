@@ -153,7 +153,61 @@ namespace ChocAn
 
         public void RunProviderReport()
         {
-            View.PrintError("Not implemented yet.");
+            var start = DateTime.Now.Subtract(TimeSpan.FromDays(7));
+            var end = DateTime.Now;
+
+            var FriendlyDateFormat = $"dddd {DateFormat}";
+            Console.WriteLine("Producing Provider reports for {0} through {1}",
+                start.ToString(FriendlyDateFormat),
+                end.ToString(FriendlyDateFormat)
+            );
+
+            var providerConsultations = Consultation.Collection.Find(c =>
+                        c.Date > start && c.Date < end
+            ).OrderBy(
+                c => c.ProviderRecord.Name
+            ).GroupBy(
+                c => c.ProviderRecord
+            );
+
+            var providerdirectory = ReportsDir + "\\provider";
+            Directory.CreateDirectory(providerdirectory);
+
+            var total = 0;
+            var providerConsultationCount = 1;
+            foreach (var group in providerConsultations)
+            {
+                var provider = group.Key;
+                var output = new StringBuilder();
+                output.Append(provider);
+                output.Append(Environment.NewLine);
+                output.Append(string.Format(
+                    "Services provided during the week {0} through {1}:",
+                    start.ToString(DateFormat),
+                    end.ToString(DateFormat)
+                ));
+                foreach (var consultation in group)
+                {
+                    output.Append(Environment.NewLine);
+                    output.Append($"  Date: {consultation.Date.ToString(DateFormat)}");
+                    output.Append(Environment.NewLine);
+                    output.Append($"  Member: {consultation.MemberRecord.Name}");
+                    output.Append(Environment.NewLine);
+                    output.Append($"  Name: {consultation.ServiceRecord.Name}");
+                    output.Append(Environment.NewLine);
+                    output.Append($"  Fee: {consultation.ServiceRecord.Fee}");
+                }
+                var filename = Regex.Replace(provider.Name, @"\s+", "") +
+                               end.ToString(DateFormat) +
+                               ".txt";
+                var path = $"{providerdirectory}/{filename}";
+                File.WriteAllText(path, output.ToString());
+                total++;
+            }
+
+            View.PrintSuccess($"Wrote {total} provider reports to {providerdirectory}");
+
+            //View.PrintError("Not implemented yet.");
         }
 
         public void RunAPReport()
