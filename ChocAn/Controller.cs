@@ -72,6 +72,11 @@ namespace ChocAn
                 ServiceRecord = service,
                 Date = date
             });
+            Console.WriteLine(member.ToString());
+            Console.WriteLine(service.ToString());
+            Console.WriteLine(date.Date.ToString("MMMM-dd-yyyy"));
+            Console.WriteLine("Press any key to contiue");
+		    Console.ReadKey();
 	    //Consultation was created, Write copy to file
 	    writeConsultationToFile(consultation, addMember);
 		
