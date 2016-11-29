@@ -27,6 +27,7 @@ namespace ChocAn
             new KeyValuePair<string, Action>("Create a new user", Controller.CreateUser),
             new KeyValuePair<string, Action>("Edit a user record", Controller.EditUser),
             new KeyValuePair<string, Action>("Delete a user record", Controller.DeleteUser),
+            new KeyValuePair<string, Action>("View a user record", Controller.ViewUser),
             new KeyValuePair<string, Action>("Dump Database(Debug)", DumpDBWrapper),
             new KeyValuePair<string, Action>("Delete Database(Debug)", DeleteDB),
         };

@@ -553,6 +553,36 @@ namespace ChocAn
             }
             View.PrintSuccess("100 Members, 50 Providers, 25 Managers, and 25 recent consultations have been created.");
         }
+
+        public void ViewUser()
+        {
+            Type user = View.UserTypeMenu();
+            BaseUser found = null;
+            if (user == null)
+            {
+                View.PrintError("no user type selected");
+                return;
+            }
+            else
+            {
+                if (user == typeof(Member))
+                {
+                    found = View.ReadMemberById();
+                }
+                else if (user == typeof(Provider))
+                    found = View.ReadProviderById();
+                else if (user == typeof(Manager))
+                {
+                    found = View.ReadManagerById();
+                }
+                if (found == null)
+                {
+                    View.PrintError("User not found");
+                    return;
+                }
+                View.PrintUser(found);
+            }        
+        }
         
         public IEnumerable<BaseModel> getManagers()
         {
