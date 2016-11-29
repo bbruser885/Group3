@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.Text.RegularExpressions;
 using LiteDB;
 
 namespace ChocAn
@@ -17,18 +16,19 @@ namespace ChocAn
         public static void InitializeDatabase() {
             // Insert some service records if they don't exist yet
             if (!DB.CollectionExists("services")) {
-                Service.Collection.Insert(new Service {
-                        Name = "Dietitian consultation",
-                        Fee = 150.00
+                var serviceSeeds = Regex.Split(Properties.Resources.SeedServices, "\r\n|\r|\n");
+                foreach (string line in serviceSeeds)
+                {
+                    var data = line.Split(',');
+                    if (data.Length == 2)
+                    {
+                        Service.Collection.Insert(new Service
+                        {
+                            Name = data[0],
+                            Fee = float.Parse(data[1])
                         });
-                Service.Collection.Insert(new Service {
-                        Name = "Physical therapy",
-                        Fee = 100.00
-                        });
-                Service.Collection.Insert(new Service {
-                        Name = "Sleep laboratory session",
-                        Fee = 390.00
-                        });
+                    }
+                }
             }
             // Set up mappings between models here. This ensures that
             // relationships between objects come out of the database intact.

@@ -1,21 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Runtime.Remoting.Messaging;
+using System.Text.RegularExpressions;
 
 namespace ChocAn
 {
-    public struct UserData
-    {
-        public String name;
-        public String street;
-        public String city;
-        public String state;
-        public String zip;
-    }
-
-
     public sealed class Controller
     {
         private static readonly Controller SingleInstance = new Controller();
@@ -43,7 +31,7 @@ namespace ChocAn
 
                 if (loginOption == LogInOptions.SeedData)
                 {
-                    SingleInstance.SeedUserData();
+                    SeedUserData();
                 }
                 else
                 {
@@ -72,13 +60,13 @@ namespace ChocAn
             var service = View.ReadServiceById();
             var date = View.ReadDateTime("Date of consultation");
 		
-	    //Create an array of strings holding the consultation to write to file
-	    string[] consultation = {member.ToString(), 
+            //Create an array of strings holding the consultation to write to file
+            string[] consultation = {member.ToString(),
 				     provider.ToString(), 
 				     service.ToString(), 
 				     date.ToString()};
 		    String addMember = member.Name;
-	    //Create a concultation object for the database collection and insert
+            //Create a concultation object for the database collection and insert
             Consultation.Collection.Insert(new Consultation {
                 ProviderRecord = provider,
                 MemberRecord = member,
@@ -90,10 +78,8 @@ namespace ChocAn
             Console.WriteLine(date.Date.ToString("MMMM-dd-yyyy"));
             Console.WriteLine("Press any key to contiue");
 		    Console.ReadKey();
-	    //Consultation was created, Write copy to file
-	    writeConsultationToFile(consultation, addMember);
-		
-		
+            //Consultation was created, Write copy to file
+            writeConsultationToFile(consultation, addMember);
         }
 
         public void RequestDirectory()
@@ -113,158 +99,7 @@ namespace ChocAn
 
         public void CreateUser()
         {
-           String control = "z";
-           Console.WriteLine("Please Select a menu option");
-           Console.WriteLine("1. Create Member");
-           Console.WriteLine("2. Create Provider");
-           Console.WriteLine("3. Create a Manager");
-           
-            while (control != "0")
-            {
-                control = Console.ReadLine();
-                switch (control)
-                {
-                    case "1":
-                        CreateMember();
-                        control = "0";
-                        break;
-                    case "2":
-                        CreateProvider();
-                        control = "0";
-                        break;
-                    case "3":
-                        CreateManager();
-                        control = "0";
-                        break;
-                    case "0":
-                        control = "0";
-                        break;
-
-                    default:
-                        break;
-
-                }
-
-            }
-
-            //View.PrintError("Not implemented yet.");
-        }
-
-        private void CreateMember()
-        {
-            Console.WriteLine("Add a Member");
-            UserData info = BuildData();
-            Console.WriteLine("New Member Information");
-            printData(info);
-            Console.WriteLine();
-            Console.WriteLine("Would you like to add this member?(Y/N)");
-            String response = Console.ReadLine();
-            Console.WriteLine();
-            if (response == "y" || response == "Y")
-            {
-                Console.WriteLine("The new Member has been added to the database.");
-                Member.Collection.Insert(new Member
-                {
-                    Name = info.name,
-                    Street = info.street,
-                    City = info.city,
-                    State = info.state,
-                    Zip = Convert.ToInt32(info.zip),
-                });
-            }
-            else
-            {
-                Console.WriteLine("The user will not be added to the database");
-            }
-
-        }
-
-
-        private void CreateProvider()
-        {
-            Console.WriteLine("Add a Provider");
-            UserData info = BuildData();
-            Console.WriteLine("New Provider Information");
-            printData(info);
-            Console.WriteLine();
-            Console.WriteLine("Would you like to add this Provider(Y/N)");
-            String response = Console.ReadLine();
-            Console.WriteLine();
-            if (response == "y" || response == "Y")
-            {
-                Console.WriteLine("The new Provider has been added to the database.");
-                Provider.Collection.Insert(new Provider()
-                {
-                    Name = info.name,
-                    Street = info.street,
-                    City = info.city,
-                    State = info.state,
-                    Zip = Convert.ToInt32(info.zip),
-                });
-            }
-            else
-            {
-                Console.WriteLine("The user will not be added to the database");
-            }
-
-        }
-
-        private void CreateManager()
-        {
-            Console.WriteLine("Add a Manager");
-            UserData info = BuildData();
-            Console.WriteLine("New Manager Information");
-            printData(info);
-            Console.WriteLine();
-            Console.WriteLine("Would you like to add this Manager?(Y/N)");
-            String response = Console.ReadLine();
-            Console.WriteLine();
-            if (response == "y" || response == "Y")
-            {
-                Console.WriteLine("The new Manager has been added to the database.");
-                Manager.Collection.Insert(new Manager
-                {
-                    Name = info.name,
-                    Street = info.street,
-                    City = info.city,
-                    State = info.state,
-                    Zip = Convert.ToInt32(info.zip),
-                });
-            }
-            else
-            {
-                Console.WriteLine("The user will not be added to the database");
-            }
-
-        }
-
-
-
-        private UserData BuildData()
-        {
-            UserData info = new UserData();
-            Console.Write("Full Name:");
-            info.name = Console.ReadLine();
-            Console.Write("Street:");
-            info.street = Console.ReadLine();
-            Console.Write("City:");
-            info.city = Console.ReadLine();
-            Console.Write("State:");
-            info.state = Console.ReadLine();
-            Console.Write("Zip:");
-            info.zip = Console.ReadLine();
-            return info;
-
-        }
-
-        private void printData(UserData info)
-        {
-            Console.WriteLine(info.name);
-            Console.WriteLine(info.street);
-            Console.WriteLine(info.city);
-            Console.WriteLine(info.state);
-            Console.WriteLine(info.zip);
-
+            View.PrintError("Not implemented yet.");
         }
 
         public void EditUser()
@@ -287,7 +122,7 @@ namespace ChocAn
             BaseModel.ClearManagerData();
         }
 	
-	//=====================================================================
+        //=====================================================================
         //Function Name: GetTimestamp
         //Description: This function pull data from a DateTime object and
         //create a string that can be used for a file name.
@@ -302,79 +137,104 @@ namespace ChocAn
             return value.ToString(("MMMM.dd.yyyy") + ".");
         }    
 	    
-	//=========================================================================
-	//Function Name: writeConsultationToFile
-	//Description: This function will take an array of strings that hold the
-	//the information for a consultation that has been created. This function
-	//will take the data and write it to file in a prediscussed format.
-	//The designated filepath will be: @Group3/ChocAn/consultationFiles/
-	//Input: consultation (string[])
-	//Output: none for now.
-	//Last updated: 11.26.2016 16:09
-	//=========================================================================
-	public void writeConsultationToFile(string[] consultation, String name)
-	{
-		//create the file name for the consultation
-		string currentTime = GetTimestamp(DateTime.Now);
-		string fileName = "consultation." +
-            name +
-			currentTime +
-			".txt";
-		
-		//Create unique file for a consultation in the designated
-		//file directory
-	    System.IO.Directory.CreateDirectory("Group3/ChocAn/consultationFiles/");
-		System.IO.File.WriteAllLines(@"Group3/ChocAn/consultationFiles/" + fileName , consultation);
-	}
+        //=========================================================================
+        //Function Name: writeConsultationToFile
+        //Description: This function will take an array of strings that hold the
+        //the information for a consultation that has been created. This function
+        //will take the data and write it to file in a prediscussed format.
+        //The designated filepath will be: @Group3/ChocAn/consultationFiles/
+        //Input: consultation (string[])
+        //Output: none for now.
+        //Last updated: 11.26.2016 16:09
+        //=========================================================================
+        public void writeConsultationToFile(string[] consultation, String name)
+        {
+            //create the file name for the consultation
+            string currentTime = GetTimestamp(DateTime.Now);
+            string fileName = "consultation." +
+                name +
+                currentTime +
+                ".txt";
+
+            //Create unique file for a consultation in the designated
+            //file directory
+            System.IO.Directory.CreateDirectory("Group3/ChocAn/consultationFiles/");
+            System.IO.File.WriteAllLines(@"Group3/ChocAn/consultationFiles/" + fileName , consultation);
+        }
 	
         /**
          * Test method: Seed the database with some fake user data
          */
         public void SeedUserData()
-		{
+        {
+            Console.WriteLine("Please wait...");
+            var memberSeeds = Regex.Split(Properties.Resources.SeedMembers, "\r\n|\r|\n");
+            foreach (var line in memberSeeds)
+            {
+                var data = line.Split(',');
+                if (data.Length == 5)
+                {
+                    Member.Collection.Insert(new Member
+                    {
+                        Name = data[0],
+                        Street = data[1],
+                        City = data[2],
+                        State = data[3],
+                        Zip = int.Parse(data[4])
+                    });
+                }
+            }
 
-            Member.Collection.Insert(new Member {
-                    Name = "Howard Price",
-                    Street = "1373 Armistice Circle",
-                    City = "Memphis",
-                    State = "TN",
-                    Zip = 38161,
+            var providerSeeds = Regex.Split(Properties.Resources.SeedProviders, "\r\n|\r|\n");
+            foreach (var line in providerSeeds)
+            {
+                if (line.Length == 0) break;
+                var data = line.Split(',');
+                if (data.Length == 5)
+                {
+                    Provider.Collection.Insert(new Provider
+                    {
+                        Name = data[0],
+                        Street = data[1],
+                        City = data[2],
+                        State = data[3],
+                        Zip = int.Parse(data[4])
                     });
-            Member.Collection.Insert(new Member {
-                    Name = "Robin Smith",
-                    Street = "94565 Sundown Ct",
-                    City = "Las Vegas",
-                    State = "NV",
-                    Zip = 89105,
+                }
+            }
+
+            var managerSeeds = Regex.Split(Properties.Resources.SeedManagers, "\r\n|\r|\n");
+            foreach (var line in managerSeeds)
+            {
+                if (line.Length == 0) break;
+                var data = line.Split(',');
+                if (data.Length == 5)
+                {
+                    Manager.Collection.Insert(new Manager
+                    {
+                        Name = data[0],
+                        Street = data[1],
+                        City = data[2],
+                        State = data[3],
+                        Zip = int.Parse(data[4])
                     });
-            Member.Collection.Insert(new Member {
-                    Name = "Donna Hernandez",
-                    Street = "9 Nancy St",
-                    City = "Dayton",
-                    State = "OH",
-                    Zip = 45414,
-                    });
-            Provider.Collection.Insert(new Provider {
-                    Name = "Phillip Parker",
-                    Street = "982 Express Point",
-                    City = "Austin",
-                    State = "TX",
-                    Zip = 78710,
-                    });
-            Provider.Collection.Insert(new Provider {
-                    Name = "Diana Brown",
-                    Street = "2157 Moose Crossing",
-                    City = "Muskegon",
-                    State = "MI",
-                    Zip = 49444,
-                    });
-            Manager.Collection.Insert(new Manager {
-                    Name = "Bob Dole",
-                    Street = "123 Fake sreet",
-                    City = "The Shire",
-                    State= "Hobbiton",
-                    Zip = 12313,
-                    });
+                }
+            }
+
+            for (int i = 0; i < 25; i++)
+            {
+                // Randomize consultation dates to within the last month or so
+                Random gen = new Random();
+                DateTime date = DateTime.Now.Subtract(TimeSpan.FromDays(gen.Next(0,30)));
+                Consultation.Collection.Insert(new Consultation
+                {
+                    MemberRecord = Member.Collection.FindById(gen.Next(1, 100)),
+                    ProviderRecord = Provider.Collection.FindById(gen.Next(1, 50)),
+                    ServiceRecord = Service.Collection.FindById(gen.Next(1, 8)),
+                    Date = date
+                });
+            }
+            Console.WriteLine("100 Members, 50 Providers, 25 Managers, and 25 recent consultations have been created.");
         }
         
         public IEnumerable<BaseModel> getManagers()
