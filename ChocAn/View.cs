@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
-using System.Collections;
 
 namespace ChocAn
 {
@@ -64,6 +63,12 @@ namespace ChocAn
             Console.ResetColor();
         }
 
+        public static void PrintSuccess(string message = "Success")
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine(message);
+            Console.ResetColor();
+        }
         public static void PrintPrompt(string prompt)
         {
             Console.ForegroundColor = ConsoleColor.Blue;
@@ -147,6 +152,88 @@ namespace ChocAn
                     Controller.RunEFTReport();
                     break;
             }
+        }
+
+        public bool Confirm(string prompt = "Try again?")
+        {
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.Write(prompt + " (Y/n) ");
+            Console.ResetColor();
+            var response = Console.ReadLine();
+            if (response.StartsWith("N") || response.StartsWith("n")) return false;
+            return true;
+        }
+
+        public Type UserTypeMenu(string prompt = "Your choice")
+        {
+            Console.WriteLine("Which user type?");
+            Console.WriteLine("1. Member");
+            Console.WriteLine("2. Provider");
+            Console.WriteLine("3. Manager");
+            Console.WriteLine("0. Cancel");
+            var choice = ReadInt(prompt);
+            switch (choice)
+            {
+                case 1:
+                    return typeof(Member);
+                case 2:
+                    return typeof(Provider);
+                case 3:
+                    return typeof(Manager);
+                default:
+                    return null;
+            }
+        }
+
+        public void ReadUpdatedPropertiesFor(ref BaseUser user)
+        {
+            var maxChoice = 5;
+            var choice = -1;
+            do
+            {
+                Console.WriteLine("Current data:");
+                Console.Write(user.ToString());
+                Console.WriteLine("-------------");
+                Console.WriteLine("Change which field?");
+                Console.WriteLine("1. Name");
+                Console.WriteLine("2. Street");
+                Console.WriteLine("3. City");
+                Console.WriteLine("4. State");
+                Console.WriteLine("5. Zip");
+                if (user.GetType() == typeof(Member))
+                {
+                    Console.WriteLine("6. Suspension Status");
+                    maxChoice = 6;
+                }
+                Console.WriteLine("0. (Done)");
+                choice = ReadInt("Your choice");
+                switch (choice)
+                {
+                    case 1:
+                        var name = ReadValidStringFor(user, "Name");
+                        user.Name = name;
+                        break;
+                    case 2:
+                        var street = ReadValidStringFor(user, "Street");
+                        user.Street = street;
+                        break;
+                    case 3:
+                        var city = ReadValidStringFor(user, "City");
+                        user.City = city;
+                        break;
+                    case 4:
+                        var state = ReadValidStringFor(user, "State");
+                        user.State = state;
+                        break;
+                    case 5:
+                        var zip = ReadValidIntFor(user, "Zip");
+                        user.Zip = zip;
+                        break;
+                    case 6:
+                        ((Member) user).Suspended = !((Member)user).Suspended;
+                        break;
+                }
+            } while (choice > 0 && choice < maxChoice + 1);
         }
 
         /**
@@ -267,69 +354,73 @@ namespace ChocAn
             return (Manager) ReadUser(new Manager());
         }
 
-        public Provider ReadProviderById()
+        public Provider ReadProviderById(string prompt = "Enter the provider ID number")
         {
             Provider provider = null;
             do
             {
-                PrintPrompt("Enter the provider ID number");
+                PrintPrompt("Enter your provider ID number");
                 int id;
                 if (!int.TryParse(Console.ReadLine(), out id)) continue;
                 provider = Provider.Collection.FindById(id);
                 if (provider == null)
                 {
                     Console.WriteLine("Couldn't find a provider with that ID number.");
+                    if (!Confirm()) return null;
                 }
             } while (provider == null);
             return provider;
         }
 
-        public Member ReadMemberById()
+        public Member ReadMemberById(string prompt = "Enter the member ID number")
         {
             Member member = null;
             do
             {
-                PrintPrompt("Enter the member ID number");
+                PrintPrompt(prompt);
                 int id;
                 if (!int.TryParse(Console.ReadLine(), out id)) continue;
                 member = Member.Collection.FindById(id);
                 if (member == null)
                 {
                     PrintError("Couldn't find a member with that ID number.");
+                    if (!Confirm()) return null;
                 }
             } while (member == null);
             return member;
         }
 
-        public Manager ReadManagerById()
+        public Manager ReadManagerById(string prompt = "Enter the manager ID number")
         {
             Manager manager = null;
             do
             {
-                PrintPrompt("Enter the manager ID number");
+                PrintPrompt(prompt);
                 int id;
                 if (!int.TryParse(Console.ReadLine(), out id)) continue;
                 manager = Manager.Collection.FindById(id);
                 if (manager == null)
                 {
                     PrintError("Couldn't find a manager with that ID number");
+                    if (!Confirm()) return null;
                 }
             } while (manager == null);
             return manager;
         }
 
-        public Service ReadServiceById()
+        public Service ReadServiceById(string prompt = "Enter the service ID number")
         {
             Service service = null;
             do
             {
-                PrintPrompt("Enter the service ID number");
+                PrintPrompt(prompt);
                 int id;
                 if (!int.TryParse(Console.ReadLine(), out id)) continue;
                 service = Service.Collection.FindById(id);
                 if (service == null)
                 {
                     PrintError("Couldn't find a service with that ID.");
+                    if (!Confirm()) return null;
                 }
             } while (service == null);
             return service;
@@ -347,7 +438,6 @@ namespace ChocAn
                         EnUs, DateTimeStyles.None, out date));
             return date;
         }
-
 
         public static int ReadInt(string prompt = "Enter a number")
         {
@@ -375,11 +465,7 @@ namespace ChocAn
 
         public void PrintUser(BaseUser user)
         {
-            Console.WriteLine(user.Name);
-            Console.WriteLine(user.Street);
-            Console.WriteLine(user.City);
-            Console.WriteLine(user.State);
-            Console.WriteLine(user.Zip);
+            Console.Write(user);
         }
 
         private static void DumpDBWrapper()

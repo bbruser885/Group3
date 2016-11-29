@@ -13,7 +13,14 @@ namespace ChocAn
 
         public override void Print() {
             base.Print();
-            Console.WriteLine(string.Format("Suspended: {0}", (Suspended ? "yes" : "no")));
+            Console.WriteLine($"Suspended: {(Suspended ? "yes" : "no")}");
+        }
+
+        public override string ToString()
+        {
+            return base.ToString() +
+                   $"Suspended: {(Suspended ? "yes" : "no")}" +
+                   Environment.NewLine;
         }
     }
 }

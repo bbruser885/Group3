@@ -63,9 +63,12 @@ namespace ChocAn
 
         public void CreateConsultation()
 		{
-            var provider = View.ReadProviderById();
+            var provider = View.ReadProviderById("Enter your provider ID number");
+		    if (provider == null) return;
             var member = View.ReadMemberById();
+		    if (member == null) return;
             var service = View.ReadServiceById();
+		    if (service == null) return;
             var date = View.ReadDateTime("Date of consultation");
 		
             //Create an array of strings holding the consultation to write to file
@@ -174,7 +177,7 @@ namespace ChocAn
         public void CreateUser()
         {
            String control = "z";
-           Console.WriteLine("Please Select a menu option");
+           Console.WriteLine("Please select a menu option");
            Console.WriteLine("1. Create Member");
            Console.WriteLine("2. Create Provider");
            Console.WriteLine("3. Create a Manager");
@@ -199,15 +202,10 @@ namespace ChocAn
                     case "0":
                         control = "0";
                         break;
-
                     default:
                         break;
-
                 }
-
             }
-
-            //View.PrintError("Not implemented yet.");
         }
 
         private void CreateMember()
@@ -279,7 +277,38 @@ namespace ChocAn
 
         public void EditUser()
         {
-            View.PrintError("Not implemented yet.");
+            var userType = View.UserTypeMenu();
+            if (userType == null) return;
+            BaseUser user = null;
+            if (userType == typeof(Member))
+            {
+                user = View.ReadMemberById("Enter the ID of the member to edit");
+            } else if (userType == typeof(Provider))
+            {
+                user = View.ReadProviderById("Enter the ID of the provider to edit");
+            } else if (userType == typeof(Manager))
+            {
+                user = View.ReadManagerById("Enter the ID of the manager to edit");
+            }
+            if (user == null) return;
+            View.ReadUpdatedPropertiesFor(ref user);
+            View.PrintUser(user);
+            var save = View.Confirm("Save this information?");
+            if (save)
+            {
+                if (userType == typeof(Member))
+                    Member.Collection.Update((Member) user);
+                else if (userType == typeof(Provider))
+                    Provider.Collection.Update((Provider) user);
+                else if (userType == typeof(Manager))
+                    Manager.Collection.Update((Manager) user);
+                View.PrintSuccess("Record saved.");
+            }
+            else
+            {
+                View.PrintError("Abandoning Changes.");
+            }
+
         }
 
         public void DeleteUser()
