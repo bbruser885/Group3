@@ -272,7 +272,7 @@ namespace ChocAn
             Provider provider = null;
             do
             {
-                PrintPrompt("Enter your provider ID number");
+                PrintPrompt("Enter the provider ID number");
                 int id;
                 if (!int.TryParse(Console.ReadLine(), out id)) continue;
                 provider = Provider.Collection.FindById(id);

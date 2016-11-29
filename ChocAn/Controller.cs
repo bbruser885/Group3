@@ -284,7 +284,147 @@ namespace ChocAn
 
         public void DeleteUser()
         {
-            View.PrintError("Not implemented yet.");
+            int choice;
+            do
+            {
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine("-- Delete User -----------------------------");
+                Console.ResetColor();
+                Console.WriteLine("1. Delete Member");
+                Console.WriteLine("2. Delete Provider");
+                Console.WriteLine("3. Delete Manger");
+                Console.WriteLine("0. Cancel");
+                choice = View.ReadInt("Your choice");
+            } while (choice < 0 || choice > 4);
+            switch (choice)
+            {
+                case 1:
+                    DeleteMember();
+                    break;
+                case 2:
+                    DeleteProvider();
+                    break;
+                case 3:
+                    DeleteManger();
+                    break;
+                
+            }
+        }
+
+        public void DeleteMember()
+        {
+            Member memberToDelete;
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine("-- Delete Member -----------------------------");
+            Console.WriteLine();
+            Console.ResetColor();
+            memberToDelete = View.ReadMemberById();
+            Console.WriteLine();
+            View.PrintUser(memberToDelete);
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine("Would you like to delete this Member?(Y/N)");
+            Console.ResetColor();
+            string choice = Console.ReadLine();
+            while(choice!="y" && choice != "Y" && choice != "n" && choice != "N")
+            {
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine("Invalid Input");
+                Console.WriteLine("Would you like to delete this Member?(Y/N)");
+                Console.ResetColor();
+                choice = Console.ReadLine();
+            }
+            switch (choice)
+            {
+                case "Y":
+                case "y":
+                    Member.Collection.Delete(memberToDelete.Id);
+                    break;
+                case "n":
+                case "N":
+                    DeleteUser();
+                    break;
+            }
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine("Member Deleted");
+            Console.ResetColor();
+
+
+        }
+
+        public void DeleteProvider()
+        {
+            Provider providerToDelete;
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine("-- Delete Provider -----------------------------");
+            Console.WriteLine();
+            Console.ResetColor();
+            providerToDelete = View.ReadProviderById();
+            Console.WriteLine();
+            View.PrintUser(providerToDelete);
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine("Would you like to delete this Provider?(Y/N)");
+            Console.ResetColor();
+            string choice = Console.ReadLine();
+            while (choice != "y" && choice != "Y" && choice != "n" && choice != "N")
+            {
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine("Invalid Input");
+                Console.WriteLine("Would you like to delete this Provider?(Y/N)");
+                Console.ResetColor();
+                choice = Console.ReadLine();
+            }
+            switch (choice)
+            {
+                case "Y":
+                case "y":
+                    Provider.Collection.Delete(providerToDelete.Id);
+                    break;
+                case "n":
+                case "N":
+                    DeleteUser();
+                    break;
+            }
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine("Provider Deleted");
+            Console.ResetColor();
+        }
+
+        public void DeleteManger()
+        {
+            Manager managerToDelete;
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine("-- Delete Manager -----------------------------");
+            Console.WriteLine();
+            Console.ResetColor();
+            managerToDelete = View.ReadManagerById();
+            Console.WriteLine();
+            View.PrintUser(managerToDelete);
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine("Would you like to delete this Manager?(Y/N)");
+            Console.ResetColor();
+            string choice = Console.ReadLine();
+            while (choice != "y" && choice != "Y" && choice != "n" && choice != "N")
+            {
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine("Invalid Input");
+                Console.WriteLine("Would you like to delete this Manager?(Y/N)");
+                Console.ResetColor();
+                choice = Console.ReadLine();
+            }
+            switch (choice)
+            {
+                case "Y":
+                case "y":
+                    Manager.Collection.Delete(managerToDelete.Id);
+                    break;
+                case "n":
+                case "N":
+                    DeleteUser();
+                    break;
+            }
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine("Manager Deleted");
+            Console.ResetColor();
         }
 
         public void ClearUserData()
