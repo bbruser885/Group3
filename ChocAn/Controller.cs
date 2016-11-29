@@ -63,8 +63,8 @@ namespace ChocAn
 	    string[] consultation = {member.ToString(), 
 				     provider.ToString(), 
 				     service.ToString(), 
-				     date};
-		
+				     date.ToString()};
+		    String addMember = member.Name;
 	    //Create a concultation object for the database collection and insert
             Consultation.Collection.Insert(new Consultation {
                 ProviderRecord = provider,
@@ -73,7 +73,7 @@ namespace ChocAn
                 Date = date
             });
 	    //Consultation was created, Write copy to file
-	    writeConsultationToFile(consultation);
+	    writeConsultationToFile(consultation, addMember);
 		
 		
         }
@@ -128,7 +128,9 @@ namespace ChocAn
         //=====================================================================
         public static String GetTimestamp(DateTime value)
         {
-            return value.ToString("yyyyMMddHHmmssffff");
+           // String pattern = "MM.dd.yyyy";
+
+            return value.ToString(("MMMM.dd.yyyy") + ".");
         }    
 	    
 	//=========================================================================
@@ -141,17 +143,18 @@ namespace ChocAn
 	//Output: none for now.
 	//Last updated: 11.26.2016 16:09
 	//=========================================================================
-	public void writeConsultationToFile(string[] consultation)
+	public void writeConsultationToFile(string[] consultation, String name)
 	{
 		//create the file name for the consultation
-		string currentTime = GetTimestamp(DateTime.now);
-		string fileName = "consultation" +
-			consultaion[0] +
+		string currentTime = GetTimestamp(DateTime.Now);
+		string fileName = "consultation." +
+            name +
 			currentTime +
 			".txt";
 		
 		//Create unique file for a consultation in the designated
 		//file directory
+	    System.IO.Directory.CreateDirectory("Group3/ChocAn/consultationFiles/");
 		System.IO.File.WriteAllLines(@"Group3/ChocAn/consultationFiles/" + fileName , consultation);
 	}
 	
