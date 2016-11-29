@@ -4,21 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Runtime.Remoting.Messaging;
 
 namespace ChocAn
 {
-    public struct UserData
-    {
-        public String name;
-        public String street;
-        public String city;
-        public String state;
-        public String zip;
-    }
-
 
     public sealed class Controller
     {
@@ -225,28 +213,21 @@ namespace ChocAn
         private void CreateMember()
         {
             Console.WriteLine("Add a Member");
-            UserData info = BuildData();
+            var member = View.ReadMember();
             Console.WriteLine("New Member Information");
-            printData(info);
+            View.PrintUser(member);
             Console.WriteLine();
             Console.WriteLine("Would you like to add this member?(Y/N)");
             String response = Console.ReadLine();
             Console.WriteLine();
             if (response == "y" || response == "Y")
             {
-                Console.WriteLine("The new Member has been added to the database.");
-                Member.Collection.Insert(new Member
-                {
-                    Name = info.name,
-                    Street = info.street,
-                    City = info.city,
-                    State = info.state,
-                    Zip = Convert.ToInt32(info.zip),
-                });
+                Member.Collection.Insert(member);
+                Console.WriteLine("The new member has been added to the database.");
             }
             else
             {
-                Console.WriteLine("The user will not be added to the database");
+                Console.WriteLine("The member will not be added to the database");
             }
 
         }
@@ -255,24 +236,17 @@ namespace ChocAn
         private void CreateProvider()
         {
             Console.WriteLine("Add a Provider");
-            UserData info = BuildData();
+            Provider provider = View.ReadProvider();
             Console.WriteLine("New Provider Information");
-            printData(info);
+            View.PrintUser(provider);
             Console.WriteLine();
             Console.WriteLine("Would you like to add this Provider(Y/N)");
             String response = Console.ReadLine();
             Console.WriteLine();
             if (response == "y" || response == "Y")
             {
+                Provider.Collection.Insert(provider);
                 Console.WriteLine("The new Provider has been added to the database.");
-                Provider.Collection.Insert(new Provider()
-                {
-                    Name = info.name,
-                    Street = info.street,
-                    City = info.city,
-                    State = info.state,
-                    Zip = Convert.ToInt32(info.zip),
-                });
             }
             else
             {
@@ -284,58 +258,22 @@ namespace ChocAn
         private void CreateManager()
         {
             Console.WriteLine("Add a Manager");
-            UserData info = BuildData();
+            Manager manager = View.ReadManager();
             Console.WriteLine("New Manager Information");
-            printData(info);
+            View.PrintUser(manager);
             Console.WriteLine();
             Console.WriteLine("Would you like to add this Manager?(Y/N)");
             String response = Console.ReadLine();
             Console.WriteLine();
             if (response == "y" || response == "Y")
             {
+                Manager.Collection.Insert(manager);
                 Console.WriteLine("The new Manager has been added to the database.");
-                Manager.Collection.Insert(new Manager
-                {
-                    Name = info.name,
-                    Street = info.street,
-                    City = info.city,
-                    State = info.state,
-                    Zip = Convert.ToInt32(info.zip),
-                });
             }
             else
             {
                 Console.WriteLine("The user will not be added to the database");
             }
-
-        }
-
-
-
-        private UserData BuildData()
-        {
-            UserData info = new UserData();
-            Console.Write("Full Name:");
-            info.name = Console.ReadLine();
-            Console.Write("Street:");
-            info.street = Console.ReadLine();
-            Console.Write("City:");
-            info.city = Console.ReadLine();
-            Console.Write("State:");
-            info.state = Console.ReadLine();
-            Console.Write("Zip:");
-            info.zip = Console.ReadLine();
-            return info;
-
-        }
-
-        private void printData(UserData info)
-        {
-            Console.WriteLine(info.name);
-            Console.WriteLine(info.street);
-            Console.WriteLine(info.city);
-            Console.WriteLine(info.state);
-            Console.WriteLine(info.zip);
 
         }
 
@@ -395,8 +333,8 @@ namespace ChocAn
 
             //Create unique file for a consultation in the designated
             //file directory
-            System.IO.Directory.CreateDirectory("Group3/ChocAn/consultationFiles/");
-            System.IO.File.WriteAllLines(@"Group3/ChocAn/consultationFiles/" + fileName , consultation);
+            Directory.CreateDirectory("Group3/ChocAn/consultationFiles/");
+            File.WriteAllLines(@"Group3/ChocAn/consultationFiles/" + fileName , consultation);
         }
 	
         /**

@@ -173,7 +173,7 @@ namespace ChocAn
             do
             {
                 // Use the property's name to prompt the user
-                PrintPrompt($"{propertyName}: ");
+                PrintPrompt(propertyName);
                 value = Console.ReadLine();
                 // Validate the property
                 var results = new List<ValidationResult>();
@@ -181,7 +181,7 @@ namespace ChocAn
                 foreach (var result in results)
                 {
                     // Print the error messages from any failed validations for the user
-                    Console.WriteLine(result);
+                    PrintError(result.ToString());
                 }
             } while (!valid);
             return value;
@@ -211,15 +211,20 @@ namespace ChocAn
             do
             {
                 // Use the property's name to prompt the user
-                Console.Write(string.Format("{0}: ", propertyName));
-                value = Convert.ToInt32(Console.ReadLine());
+                PrintPrompt(propertyName);
+                // Read an int
+                if (!int.TryParse(Console.ReadLine(), out value))
+                {
+                    PrintError("You must enter a number.");
+                    continue;
+                }
                 // Validate the property
                 var results = new List<ValidationResult>();
                 valid = Validator.TryValidateProperty(value, context, results);
                 foreach (var result in results)
                 {
                     // Print the error messages from any failed validations for the user
-                    Console.WriteLine(result);
+                    PrintError(result.ToString());
                 }
             } while (!valid);
             return value;
@@ -366,6 +371,15 @@ namespace ChocAn
             {
                 item.Print();
             }
+        }
+
+        public void PrintUser(BaseUser user)
+        {
+            Console.WriteLine(user.Name);
+            Console.WriteLine(user.Street);
+            Console.WriteLine(user.City);
+            Console.WriteLine(user.State);
+            Console.WriteLine(user.Zip);
         }
 
         private static void DumpDBWrapper()
