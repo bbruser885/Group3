@@ -1,8 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Runtime.Remoting.Messaging;
 
 namespace ChocAn
 {
+    public struct UserData
+    {
+        public String name;
+        public String street;
+        public String city;
+        public String state;
+        public String zip;
+    }
+
+
     public sealed class Controller
     {
         private static readonly Controller SingleInstance = new Controller();
@@ -100,7 +113,158 @@ namespace ChocAn
 
         public void CreateUser()
         {
-            View.PrintError("Not implemented yet.");
+           String control = "z";
+           Console.WriteLine("Please Select a menu option");
+           Console.WriteLine("1. Create Member");
+           Console.WriteLine("2. Create Provider");
+           Console.WriteLine("3. Create a Manager");
+           
+            while (control != "0")
+            {
+                control = Console.ReadLine();
+                switch (control)
+                {
+                    case "1":
+                        CreateMember();
+                        control = "0";
+                        break;
+                    case "2":
+                        CreateProvider();
+                        control = "0";
+                        break;
+                    case "3":
+                        CreateManager();
+                        control = "0";
+                        break;
+                    case "0":
+                        control = "0";
+                        break;
+
+                    default:
+                        break;
+
+                }
+
+            }
+
+            //View.PrintError("Not implemented yet.");
+        }
+
+        private void CreateMember()
+        {
+            Console.WriteLine("Add a Member");
+            UserData info = BuildData();
+            Console.WriteLine("New Member Information");
+            printData(info);
+            Console.WriteLine();
+            Console.WriteLine("Would you like to add this member?(Y/N)");
+            String response = Console.ReadLine();
+            Console.WriteLine();
+            if (response == "y" || response == "Y")
+            {
+                Console.WriteLine("The new Member has been added to the database.");
+                Member.Collection.Insert(new Member
+                {
+                    Name = info.name,
+                    Street = info.street,
+                    City = info.city,
+                    State = info.state,
+                    Zip = Convert.ToInt32(info.zip),
+                });
+            }
+            else
+            {
+                Console.WriteLine("The user will not be added to the database");
+            }
+
+        }
+
+
+        private void CreateProvider()
+        {
+            Console.WriteLine("Add a Provider");
+            UserData info = BuildData();
+            Console.WriteLine("New Provider Information");
+            printData(info);
+            Console.WriteLine();
+            Console.WriteLine("Would you like to add this Provider(Y/N)");
+            String response = Console.ReadLine();
+            Console.WriteLine();
+            if (response == "y" || response == "Y")
+            {
+                Console.WriteLine("The new Provider has been added to the database.");
+                Provider.Collection.Insert(new Provider()
+                {
+                    Name = info.name,
+                    Street = info.street,
+                    City = info.city,
+                    State = info.state,
+                    Zip = Convert.ToInt32(info.zip),
+                });
+            }
+            else
+            {
+                Console.WriteLine("The user will not be added to the database");
+            }
+
+        }
+
+        private void CreateManager()
+        {
+            Console.WriteLine("Add a Manager");
+            UserData info = BuildData();
+            Console.WriteLine("New Manager Information");
+            printData(info);
+            Console.WriteLine();
+            Console.WriteLine("Would you like to add this Manager?(Y/N)");
+            String response = Console.ReadLine();
+            Console.WriteLine();
+            if (response == "y" || response == "Y")
+            {
+                Console.WriteLine("The new Manager has been added to the database.");
+                Manager.Collection.Insert(new Manager
+                {
+                    Name = info.name,
+                    Street = info.street,
+                    City = info.city,
+                    State = info.state,
+                    Zip = Convert.ToInt32(info.zip),
+                });
+            }
+            else
+            {
+                Console.WriteLine("The user will not be added to the database");
+            }
+
+        }
+
+
+
+        private UserData BuildData()
+        {
+            UserData info = new UserData();
+            Console.Write("Full Name:");
+            info.name = Console.ReadLine();
+            Console.Write("Street:");
+            info.street = Console.ReadLine();
+            Console.Write("City:");
+            info.city = Console.ReadLine();
+            Console.Write("State:");
+            info.state = Console.ReadLine();
+            Console.Write("Zip:");
+            info.zip = Console.ReadLine();
+            return info;
+
+        }
+
+        private void printData(UserData info)
+        {
+            Console.WriteLine(info.name);
+            Console.WriteLine(info.street);
+            Console.WriteLine(info.city);
+            Console.WriteLine(info.state);
+            Console.WriteLine(info.zip);
+
         }
 
         public void EditUser()

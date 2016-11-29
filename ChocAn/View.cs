@@ -354,7 +354,7 @@ namespace ChocAn
             System.IO.File.AppendAllText("databaseDump.txt", text.ToString());
         }
         
-        //Test Method: Delete all info in database
+        //Test Method: Delete all UserData in database
         private static void DeleteDB()
         {
             Controller.ClearManagerData();
