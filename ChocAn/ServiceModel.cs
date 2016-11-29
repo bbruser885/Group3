@@ -19,13 +19,6 @@ namespace ChocAn
         [Range(typeof(Double), "0", "999.99", ErrorMessage = "Fee must be between 0 and 999.99.")]
         public double Fee { get; set; }
 
- 
-
-        public override void Print()
-        {
-            Console.Write(ToString());
-        }
-
         public override string ToString()
         {
            StringBuilder text = new StringBuilder();

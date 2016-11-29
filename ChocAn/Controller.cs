@@ -12,6 +12,7 @@ namespace ChocAn
     {
         private static readonly string BaseDir = AppDomain.CurrentDomain.BaseDirectory;
         private static readonly string ReportsDir = BaseDir + "reports";
+        private static readonly string ConsultationsDir = BaseDir + "consultations";
         private const string DateFormat = "MM-dd-yyyy";
 
         private static readonly Controller SingleInstance = new Controller();
@@ -62,35 +63,31 @@ namespace ChocAn
         }
 
         public void CreateConsultation()
-		{
+        {
             var provider = View.ReadProviderById("Enter your provider ID number");
-		    if (provider == null) return;
+            if (provider == null) return;
             var member = View.ReadMemberById();
-		    if (member == null) return;
+            if (member == null) return;
             var service = View.ReadServiceById();
-		    if (service == null) return;
+            if (service == null) return;
             var date = View.ReadDateTime("Date of consultation");
-		
-            //Create an array of strings holding the consultation to write to file
-            string[] consultation = {member.ToString(),
-				     provider.ToString(), 
-				     service.ToString(), 
-				     date.ToString()};
-		    String addMember = member.Name;
+
             //Create a concultation object for the database collection and insert
-            Consultation.Collection.Insert(new Consultation {
+            var consultation = new Consultation
+            {
                 ProviderRecord = provider,
                 MemberRecord = member,
                 ServiceRecord = service,
                 Date = date
-            });
+            };
+            Consultation.Collection.Insert(consultation);
             Console.WriteLine(member.ToString());
             Console.WriteLine(service.ToString());
-            Console.WriteLine(date.Date.ToString("MMMM-dd-yyyy"));
+            Console.WriteLine(date.ToString(DateFormat));
             Console.WriteLine("Press any key to contiue");
-		    Console.ReadKey();
+            Console.ReadKey();
             //Consultation was created, Write copy to file
-            writeConsultationToFile(consultation, addMember);
+            writeConsultationToFile(consultation);
         }
 
         public void RequestDirectory()
@@ -110,7 +107,7 @@ namespace ChocAn
             );
 
             var memberConsultations = Consultation.Collection.Find(c =>
-                c.Date > start && c.Date < end
+                        c.Date > start && c.Date < end
             ).OrderBy(
                 c => c.MemberRecord.Name
             ).GroupBy(
@@ -151,7 +148,7 @@ namespace ChocAn
                 total++;
             }
 
-            Console.WriteLine($"Wrote {total} member reports to {memberDirectory}");
+            View.PrintSuccess($"Wrote {total} member reports to {memberDirectory}");
         }
 
         public void RunProviderReport()
@@ -176,11 +173,11 @@ namespace ChocAn
 
         public void CreateUser()
         {
-           String control = "z";
-           Console.WriteLine("Please select a menu option");
-           Console.WriteLine("1. Create Member");
-           Console.WriteLine("2. Create Provider");
-           Console.WriteLine("3. Create a Manager");
+            String control = "z";
+            Console.WriteLine("Please select a menu option");
+            Console.WriteLine("1. Create Member");
+            Console.WriteLine("2. Create Provider");
+            Console.WriteLine("3. Create a Manager");
 
             while (control != "0")
             {
@@ -215,42 +212,35 @@ namespace ChocAn
             Console.WriteLine("New Member Information");
             View.PrintUser(member);
             Console.WriteLine();
-            Console.WriteLine("Would you like to add this member?(Y/N)");
-            String response = Console.ReadLine();
-            Console.WriteLine();
-            if (response == "y" || response == "Y")
+            var save = View.Confirm("Would you like to save this member?");
+            if (save)
             {
                 Member.Collection.Insert(member);
-                Console.WriteLine("The new member has been added to the database.");
+                View.PrintSuccess($"The new member has been added to the database with ID {member.Id}.");
             }
             else
             {
-                Console.WriteLine("The member will not be added to the database");
+                View.PrintError("The member will not be added to the database");
             }
-
         }
 
 
         private void CreateProvider()
         {
             Console.WriteLine("Add a Provider");
-            Provider provider = View.ReadProvider();
+            var provider = View.ReadProvider();
             Console.WriteLine("New Provider Information");
             View.PrintUser(provider);
-            Console.WriteLine();
-            Console.WriteLine("Would you like to add this Provider(Y/N)");
-            String response = Console.ReadLine();
-            Console.WriteLine();
-            if (response == "y" || response == "Y")
+            var save = View.Confirm("Would you like to save this provider?");
+            if (save)
             {
                 Provider.Collection.Insert(provider);
-                Console.WriteLine("The new Provider has been added to the database.");
+                View.PrintSuccess($"The new Provider has been added to the database with ID {provider.Id}.");
             }
             else
             {
-                Console.WriteLine("The user will not be added to the database");
+                View.PrintError("The user will not be added to the database");
             }
-
         }
 
         private void CreateManager()
@@ -259,20 +249,16 @@ namespace ChocAn
             Manager manager = View.ReadManager();
             Console.WriteLine("New Manager Information");
             View.PrintUser(manager);
-            Console.WriteLine();
-            Console.WriteLine("Would you like to add this Manager?(Y/N)");
-            String response = Console.ReadLine();
-            Console.WriteLine();
-            if (response == "y" || response == "Y")
+            var save = View.Confirm("Would you like to save this manager?");
+            if (save)
             {
                 Manager.Collection.Insert(manager);
-                Console.WriteLine("The new Manager has been added to the database.");
+                View.PrintSuccess($"The new manager has been added to the database with ID {manager.Id}.");
             }
             else
             {
-                Console.WriteLine("The user will not be added to the database");
+                View.PrintError("The user will not be added to the database");
             }
-
         }
 
         public void EditUser()
@@ -283,10 +269,12 @@ namespace ChocAn
             if (userType == typeof(Member))
             {
                 user = View.ReadMemberById("Enter the ID of the member to edit");
-            } else if (userType == typeof(Provider))
+            }
+            else if (userType == typeof(Provider))
             {
                 user = View.ReadProviderById("Enter the ID of the provider to edit");
-            } else if (userType == typeof(Manager))
+            }
+            else if (userType == typeof(Manager))
             {
                 user = View.ReadManagerById("Enter the ID of the manager to edit");
             }
@@ -465,45 +453,30 @@ namespace ChocAn
         {
             BaseModel.ClearManagerData();
         }
-	
-        //=====================================================================
-        //Function Name: GetTimestamp
-        //Description: This function pull data from a DateTime object and
-        //create a string that can be used for a file name.
-        //Input: value (DateTime)
-        //Output: string
-        //Last Updated: 11.26.2016
-        //=====================================================================
-        public static String GetTimestamp(DateTime value)
-        {
-           // String pattern = "MM.dd.yyyy";
 
-            return value.ToString(("MMMM.dd.yyyy") + ".");
-        }    
-	    
         //=========================================================================
         //Function Name: writeConsultationToFile
-        //Description: This function will take an array of strings that hold the
-        //the information for a consultation that has been created. This function
-        //will take the data and write it to file in a prediscussed format.
-        //The designated filepath will be: @Group3/ChocAn/consultationFiles/
-        //Input: consultation (string[])
+        //Description: This function will take a newly saved consultation model.
+        //It will write the data to a file.
+        //The output directory will be: (application directory)/consultations/
+        //Input: consultation (Consultation)
         //Output: none for now.
         //Last updated: 11.26.2016 16:09
         //=========================================================================
-        public void writeConsultationToFile(string[] consultation, String name)
+        public void writeConsultationToFile(Consultation consultation)
         {
             //create the file name for the consultation
-            string currentTime = GetTimestamp(DateTime.Now);
             string fileName = "consultation." +
-                name +
-                currentTime +
-                ".txt";
+                              Regex.Replace(consultation.MemberRecord.Name, @"\s+", "") +
+                              consultation.Date.ToString(DateFormat) +
+                              ".txt";
 
             //Create unique file for a consultation in the designated
             //file directory
-            Directory.CreateDirectory("Group3/ChocAn/consultationFiles/");
-            File.WriteAllLines(@"Group3/ChocAn/consultationFiles/" + fileName , consultation);
+            Directory.CreateDirectory(ConsultationsDir);
+            var path = $"{ConsultationsDir}\\{fileName}";
+            File.WriteAllText(path, consultation.ToString());
+            View.PrintSuccess($"Wrote consultation file to {path}.");
         }
 	
         /**
@@ -578,7 +551,7 @@ namespace ChocAn
                     Date = date
                 });
             }
-            Console.WriteLine("100 Members, 50 Providers, 25 Managers, and 25 recent consultations have been created.");
+            View.PrintSuccess("100 Members, 50 Providers, 25 Managers, and 25 recent consultations have been created.");
         }
         
         public IEnumerable<BaseModel> getManagers()

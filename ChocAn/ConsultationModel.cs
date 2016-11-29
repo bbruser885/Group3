@@ -19,11 +19,6 @@ namespace ChocAn
           Created = DateTime.Now;
         }
 
-        public override void Print()
-        {
-            Console.Write(ToString());
-        }
-
         public override string ToString()
         {
             StringBuilder text = new StringBuilder();

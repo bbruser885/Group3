@@ -11,11 +11,6 @@ namespace ChocAn
         // `Member.Collection` is a LiteDB collection of members
         public static LiteCollection<Member> Collection = DB.GetCollection<Member>("members");
 
-        public override void Print() {
-            base.Print();
-            Console.WriteLine($"Suspended: {(Suspended ? "yes" : "no")}");
-        }
-
         public override string ToString()
         {
             return base.ToString() +

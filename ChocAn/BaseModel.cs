@@ -8,8 +8,7 @@ namespace ChocAn
         // Database connection - All models use this internally
         protected static LiteDatabase DB = new LiteDatabase("data.db");
 
-        // All models should define a default print function
-        public abstract void Print();
+        // All models should define a ToString function
         public abstract override string ToString();
 
         // Bootstrap the DB

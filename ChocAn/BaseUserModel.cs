@@ -20,11 +20,6 @@ namespace ChocAn
         [RegularExpression(@"^(\d{5})$", ErrorMessage = "Zip must be 5 numbers")]
         public int Zip { get; set; }
 
-        public override void Print()
-        {
-            Console.Write(ToString());
-        }
-
         public override string ToString()
         {
             StringBuilder text = new StringBuilder();

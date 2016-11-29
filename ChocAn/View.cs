@@ -45,7 +45,7 @@ namespace ChocAn
 
         private void PrintMenu(IReadOnlyList<KeyValuePair<string, Action>> menuOptions)
         {
-            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("-- ChocAn Menu ------------------------------");
             Console.ResetColor();
 
@@ -71,7 +71,7 @@ namespace ChocAn
         }
         public static void PrintPrompt(string prompt)
         {
-            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.ForegroundColor = ConsoleColor.Cyan;
             Console.Write($"{prompt}: ");
             Console.ResetColor();
         }
@@ -81,7 +81,7 @@ namespace ChocAn
             int choice;
             do
             {
-                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("-- ChocAn Login -----------------------------");
                 Console.ResetColor();
                 Console.WriteLine("1. Log in as a provider");
@@ -127,7 +127,7 @@ namespace ChocAn
             int choice;
             do
             {
-                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("-- Run a Report -----------------------------");
                 Console.ResetColor();
                 Console.WriteLine("1. Member Report");
@@ -156,7 +156,7 @@ namespace ChocAn
 
         public bool Confirm(string prompt = "Try again?")
         {
-            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.ForegroundColor = ConsoleColor.Cyan;
             Console.Write(prompt + " (Y/n) ");
             Console.ResetColor();
             var response = Console.ReadLine();
@@ -430,10 +430,12 @@ namespace ChocAn
         {
             string dateString;
             DateTime date;
+            var defaultDate = DateTime.Now;
             do
             {
-                PrintPrompt(prompt + " (MM-DD-YYYY): ");
+                PrintPrompt($"{prompt} ({defaultDate:MM-dd-yyyy}): ");
                 dateString = Console.ReadLine();
+                if (dateString.Length == 0) dateString = defaultDate.ToString("MM-dd-yyyy");
             } while (!DateTime.TryParseExact(dateString, "MM-dd-yyyy",
                         EnUs, DateTimeStyles.None, out date));
             return date;
@@ -451,21 +453,19 @@ namespace ChocAn
             return id;
         }
 
-        /**
-         * Calls the print function on some set of models, e.g. a resultset
-         * produced by Collection.FindAll()
-         */
-        public void PrintAll(IEnumerable<BaseModel> items)
-        {
-            foreach (var item in items)
-            {
-                item.Print();
-            }
-        }
-
         public void PrintUser(BaseUser user)
         {
-            Console.Write(user);
+            Console.WriteLine($"Name: {user.Name}");
+            Console.WriteLine("Address:");
+            Console.WriteLine($"  Street: {user.Street}");
+            Console.WriteLine($"  City: {user.City}");
+            Console.WriteLine($"  State: {user.State}");
+            Console.WriteLine($"  Zip: {user.Zip}");
+            if (user.GetType() == typeof(Member))
+            {
+                var suspended = ((Member)user).Suspended ? "yes" : "no";
+                Console.WriteLine($"Suspended: {suspended}");
+            }
         }
 
         private static void DumpDBWrapper()
