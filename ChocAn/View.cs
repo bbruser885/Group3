@@ -17,7 +17,6 @@ namespace ChocAn
         {
             new KeyValuePair<string, Action>("Enter a consultation", Controller.Instance.CreateConsultation),
             new KeyValuePair<string, Action>("Request a copy of the Provider Directory", Controller.Instance.RequestDirectory),
-            new KeyValuePair<string, Action>("Dump Database(Debug)", DumpDBWrapper),
         };
 
         private readonly List<KeyValuePair<string, Action>> _managerMenuOptions = new List<KeyValuePair<string, Action>>

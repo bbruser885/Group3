@@ -92,16 +92,18 @@ namespace ChocAn
 
         public void RequestDirectory()
         {
-	    int serviceTotal = Service.Collection.Count();
-            var serviceDirectory = Service.Collection.FindAll().OrderBy(x => x.Name);
-	    StringBuilder text = new StringBuilder();
-		
-	    foreach (var item in Directory)
-	    {
-		    text.Append(item.ToString());
-	    }
-	    System.IO.File.AppendAllText("DirectoryList.txt", text.ToString());
-	    View.PrintSuccess($"Wrote {serviceTotal} service(s) to file");	
+            int serviceTotal = Service.Collection.Count();
+                var serviceDirectory = Service.Collection.FindAll().OrderBy(x => x.Name);
+            StringBuilder text = new StringBuilder();
+
+            foreach (var item in serviceDirectory)
+            {
+                text.Append(item.ToString());
+            }
+            var filename = "DirectoryList.txt";
+            File.AppendAllText(filename, text.ToString());
+            var path = BaseDir + Path.DirectorySeparatorChar + filename;
+            View.PrintSuccess($"Wrote {serviceTotal} service(s) to {path}");
         }
 
         public void RunMemberReport()
@@ -116,7 +118,7 @@ namespace ChocAn
             );
 
             var memberConsultations = Consultation.Collection.Find(c =>
-                        c.Date > start && c.Date < end
+                c.Date > start && c.Date < end
             ).OrderBy(
                 c => c.MemberRecord.Name
             ).GroupBy(
@@ -152,7 +154,7 @@ namespace ChocAn
                 var filename = Regex.Replace(member.Name, @"\s+", "") +
                                end.ToString(DateFormat) +
                                ".txt";
-                var path = $"{memberDirectory}/{filename}";
+                var path = memberDirectory + Path.DirectorySeparatorChar + filename;
                 File.WriteAllText(path, output.ToString());
                 total++;
             }
@@ -209,14 +211,12 @@ namespace ChocAn
                 var filename = Regex.Replace(provider.Name, @"\s+", "") +
                                end.ToString(DateFormat) +
                                ".txt";
-                var path = $"{providerdirectory}/{filename}";
+                var path = providerdirectory + Path.DirectorySeparatorChar + filename;
                 File.WriteAllText(path, output.ToString());
                 total++;
             }
 
             View.PrintSuccess($"Wrote {total} provider reports to {providerdirectory}");
-
-            //View.PrintError("Not implemented yet.");
         }
 
         public void RunAPReport()
@@ -245,7 +245,7 @@ namespace ChocAn
             var APdirectory = ReportsDir + "\\APSummary";
             Directory.CreateDirectory(APdirectory);
             var fileName = "ApSummary" + end.ToString(DateFormat) + ".txt";
-            var path = $"{APdirectory}/{fileName}";
+            var path = APdirectory + Path.DirectorySeparatorChar + fileName;
             foreach (var group in providerConsultations)
             {
                 var provider = group.Key;
@@ -282,8 +282,6 @@ namespace ChocAn
             File.AppendAllText(path, "Total sum of Fees: ");
             File.AppendAllText(path, sumFees.ToString());
             File.AppendAllText(path, "\n");
-
-            // View.PrintError("Not implemented yet.");
         }
 
         public void RunEFTReport()
@@ -421,7 +419,6 @@ namespace ChocAn
             {
                 View.PrintError("Abandoning Changes.");
             }
-
         }
 
         public void DeleteUser()
@@ -449,7 +446,6 @@ namespace ChocAn
                 case 3:
                     DeleteManger();
                     break;
-                
             }
         }
 
@@ -489,8 +485,6 @@ namespace ChocAn
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine("Member Deleted");
             Console.ResetColor();
-
-
         }
 
         public void DeleteProvider()
@@ -599,7 +593,7 @@ namespace ChocAn
             //Create unique file for a consultation in the designated
             //file directory
             Directory.CreateDirectory(ConsultationsDir);
-            var path = $"{ConsultationsDir}\\{fileName}";
+            var path = ConsultationsDir + Path.DirectorySeparatorChar + fileName;
             File.WriteAllText(path, consultation.ToString());
             View.PrintSuccess($"Wrote consultation file to {path}.");
         }
@@ -711,24 +705,15 @@ namespace ChocAn
         
         public IEnumerable<BaseModel> getManagers()
         {
-            var col = Manager.Collection.FindAll();
-            
-            
-            return col;
+            return Manager.Collection.FindAll();
         }
         public IEnumerable<BaseModel> getProviders()
         {
-            var col = Provider.Collection.FindAll();
-
-
-            return col;
+            return Provider.Collection.FindAll();
         }
         public IEnumerable<BaseModel> getMembers()
         {
-            var col = Member.Collection.FindAll();
-
-
-            return col;
+            return Member.Collection.FindAll();
         }
 
     }
