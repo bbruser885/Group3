@@ -92,7 +92,16 @@ namespace ChocAn
 
         public void RequestDirectory()
         {
-            View.PrintError("Not implemented yet.");
+	    int serviceTotal = Service.Collection.Count();
+            var serviceDirectory = Service.Collection.FindAll().OrderBy(x => x.Name);
+	    StringBuilder text = new StringBuilder();
+		
+	    foreach (var item in Directory)
+	    {
+		    text.Append(item.ToString());
+	    }
+	    System.IO.File.AppendAllText("DirectoryList.txt", text.ToString());
+	    View.PrintSuccess($"Wrote {serviceTotal} service(s) to file");	
         }
 
         public void RunMemberReport()
