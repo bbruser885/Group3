@@ -166,7 +166,9 @@ namespace ChocAn
 
         public Type UserTypeMenu(string prompt = "Your choice")
         {
+            Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("Which user type?");
+            Console.ResetColor();
             Console.WriteLine("1. Member");
             Console.WriteLine("2. Provider");
             Console.WriteLine("3. Manager");
@@ -453,9 +455,22 @@ namespace ChocAn
             return id;
         }
 
+        /*
+         * Func:    ConvertToUserID
+         * Purpose: converts database ID to User ID
+         * Param:   int - IdToConvert
+         * return:  string - 9 digit string for User ID
+         * Revised: 12/1/16
+         */
+        public string ConvertToUserID(int IdToConvert)
+        {
+            return IdToConvert.ToString("D9");
+        }
+
         public void PrintUser(BaseUser user)
         {
             Console.WriteLine($"Name: {user.Name}");
+            Console.WriteLine($"ID: {ConvertToUserID(user.Id)}");
             Console.WriteLine("Address:");
             Console.WriteLine($"  Street: {user.Street}");
             Console.WriteLine($"  City: {user.City}");

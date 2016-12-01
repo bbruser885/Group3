@@ -421,12 +421,20 @@ namespace ChocAn
             }
         }
 
+        /*
+         * Func:    DeleteUser
+         * Purpose: allows manager to deletes user(member/provider/manager) 
+         *          from the database
+         * return:  void
+         * Revised: 11/29/16
+         */
         public void DeleteUser()
         {
             int choice;
             do
             {
-                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine();
                 Console.WriteLine("-- Delete User -----------------------------");
                 Console.ResetColor();
                 Console.WriteLine("1. Delete Member");
@@ -449,23 +457,31 @@ namespace ChocAn
             }
         }
 
+        /*
+         * Func:    DeleteMember
+         * Purpose: prompts manager for member ID, verifies member exits,
+         *          deletes member after confimation
+         * return:  void
+         * Revised: 11/29/16
+         */
         public void DeleteMember()
         {
             Member memberToDelete;
-            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine();
             Console.WriteLine("-- Delete Member -----------------------------");
             Console.WriteLine();
             Console.ResetColor();
             memberToDelete = View.ReadMemberById();
             Console.WriteLine();
             View.PrintUser(memberToDelete);
-            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("Would you like to delete this Member?(Y/N)");
             Console.ResetColor();
             string choice = Console.ReadLine();
             while(choice!="y" && choice != "Y" && choice != "n" && choice != "N")
             {
-                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("Invalid Input");
                 Console.WriteLine("Would you like to delete this Member?(Y/N)");
                 Console.ResetColor();
@@ -482,28 +498,37 @@ namespace ChocAn
                     DeleteUser();
                     break;
             }
-            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine();
             Console.WriteLine("Member Deleted");
             Console.ResetColor();
         }
 
+        /*
+         * Func:    DeleteProvider
+         * Purpose: prompts manager for provider ID, verifies provider exits,
+         *          deletes provider after confimation
+         * return:  void
+         * Revised: 11/29/16
+         */
         public void DeleteProvider()
         {
             Provider providerToDelete;
-            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine();
             Console.WriteLine("-- Delete Provider -----------------------------");
             Console.WriteLine();
             Console.ResetColor();
             providerToDelete = View.ReadProviderById();
             Console.WriteLine();
             View.PrintUser(providerToDelete);
-            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("Would you like to delete this Provider?(Y/N)");
             Console.ResetColor();
             string choice = Console.ReadLine();
             while (choice != "y" && choice != "Y" && choice != "n" && choice != "N")
             {
-                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("Invalid Input");
                 Console.WriteLine("Would you like to delete this Provider?(Y/N)");
                 Console.ResetColor();
@@ -520,28 +545,37 @@ namespace ChocAn
                     DeleteUser();
                     break;
             }
-            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine();
             Console.WriteLine("Provider Deleted");
             Console.ResetColor();
         }
 
+        /*
+         * Func:    DeleteManger
+         * Purpose: prompts manager for manager to deletes ID, verifies
+         *          manager exits, deletes manager after confimation
+         * return:  void
+         * Revised: 11/29/16
+         */
         public void DeleteManger()
         {
             Manager managerToDelete;
-            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine();
             Console.WriteLine("-- Delete Manager -----------------------------");
             Console.WriteLine();
             Console.ResetColor();
             managerToDelete = View.ReadManagerById();
             Console.WriteLine();
             View.PrintUser(managerToDelete);
-            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("Would you like to delete this Manager?(Y/N)");
             Console.ResetColor();
             string choice = Console.ReadLine();
             while (choice != "y" && choice != "Y" && choice != "n" && choice != "N")
             {
-                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("Invalid Input");
                 Console.WriteLine("Would you like to delete this Manager?(Y/N)");
                 Console.ResetColor();
@@ -558,16 +592,19 @@ namespace ChocAn
                     DeleteUser();
                     break;
             }
-            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine();
             Console.WriteLine("Manager Deleted");
             Console.ResetColor();
         }
 
+        /*Deletes all provider and member data from  database*/
         public void ClearUserData()
         {
             BaseModel.ClearUserData();
         }
 
+        /*Deletes all manager data from database*/
         public void ClearManagerData()
         {
             BaseModel.ClearManagerData();
