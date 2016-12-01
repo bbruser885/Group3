@@ -296,7 +296,72 @@ namespace ChocAn
 
         public void RunEFTReport()
         {
-            View.PrintError("Not implemented yet.");
+            Dictionary<string, double> EFTSummary = new Dictionary<string, double>();
+            var start = DateTime.Now.Subtract(TimeSpan.FromDays(7));
+            var end = DateTime.Now;
+            var FriendlyDateFormat = $"dddd {DateFormat}";
+            Console.WriteLine("Producing EFT report for {0} through {1}",
+                start.ToString(FriendlyDateFormat),
+                end.ToString(FriendlyDateFormat)
+            );
+
+            var providerConsultations = Consultation.Collection.Find(c =>
+                       c.Date > start && c.Date < end
+           ).OrderBy(
+               c => c.ProviderRecord.Name
+           ).GroupBy(
+               c => c.ProviderRecord
+           );
+            foreach (var group in providerConsultations)
+            {
+                foreach (var provider in group)
+                {
+                    if(!EFTSummary.ContainsKey(provider.ProviderRecord.Name))
+                    {
+                        EFTSummary.Add(provider.ProviderRecord.Name, provider.ServiceRecord.Fee);
+                    }
+                    else if(EFTSummary.ContainsKey(provider.ProviderRecord.Name))
+                    {
+                        EFTSummary[provider.ProviderRecord.Name] += provider.ServiceRecord.Fee;
+                    }
+                }
+            }
+
+            var EFTdirectory = ReportsDir + "\\EFTSummary";
+            Directory.CreateDirectory(EFTdirectory);
+            var fileName = "EFTSummary" + end.ToString(DateFormat) + ".txt";
+            var path = EFTdirectory + Path.DirectorySeparatorChar + fileName;
+            string repeatBreak = "";
+            var providerCount = 0;
+            foreach (var group in providerConsultations)
+            {
+                var provider = group.Key;
+                var output = new StringBuilder();
+                if (provider.Name != repeatBreak)
+                {
+                    output.Append("====================");
+                    output.Append(Environment.NewLine);
+                    output.Append("Name: ");
+                    output.Append(provider.Name);
+                    output.Append(Environment.NewLine);
+                    output.Append("ID: ");
+                    output.Append(provider.Id);
+                    output.Append(Environment.NewLine);
+                    output.Append("Fee Total by Provider: $");
+                    output.Append(EFTSummary[provider.Name]);
+                    output.Append(Environment.NewLine);
+                    output.Append(string.Format(
+                        "Total fees charged for consultations by this provider during the week {0} through {1}:",
+                        start.ToString(DateFormat),
+                        end.ToString(DateFormat)
+                        ));
+                    output.Append(Environment.NewLine);
+                    File.AppendAllText(path, output.ToString());
+                    providerCount++;
+                }
+                repeatBreak = provider.Name;
+            }
+            View.PrintSuccess($"Wrote {providerCount} EFT Summary Reports to {EFTdirectory}");
         }
 
         public void RunAllReports()
