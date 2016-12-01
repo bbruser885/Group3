@@ -366,7 +366,10 @@ namespace ChocAn
 
         public void RunAllReports()
         {
-            View.PrintError("Not implemented yet.");
+            RunMemberReport();
+            RunProviderReport();
+            RunAPReport();
+            RunEFTReport();
         }
 
         public void CreateUser()
