@@ -370,6 +370,7 @@ namespace ChocAn
             RunProviderReport();
             RunAPReport();
             RunEFTReport();
+	    View.PrintSuccess($"Success! All reports have been run.");
         }
 
         public void CreateUser()
