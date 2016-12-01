@@ -508,6 +508,13 @@ namespace ChocAn
             Controller.ClearUserData();
         }
 
+        public string ReadString(string prompt = "Text", int maxLength = 0)
+        {
+            if (maxLength > 0) prompt += $" (Maximum {maxLength} characters)";
+            PrintPrompt(prompt);
+            var text = Console.ReadLine();
+            return text.Length > maxLength ? text.Substring(0, maxLength - 1) : text;
+        }
     }
 }
 

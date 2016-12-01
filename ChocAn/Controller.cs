@@ -72,13 +72,15 @@ namespace ChocAn
             var service = View.ReadServiceById();
             if (service == null) return;
             var date = View.ReadDateTime("Date of consultation");
+            var comments = View.ReadString("Comments", 100);
 
             var consultation = new Consultation
             {
                 ProviderRecord = provider,
                 MemberRecord = member,
                 ServiceRecord = service,
-                Date = date
+                Date = date,
+                Comments = comments
             };
 
             Console.WriteLine(consultation);
@@ -91,9 +93,7 @@ namespace ChocAn
             //Consultation was created, Write copy to file
             writeConsultationToFile(consultation);
             View.PrintSuccess("The following consultation has been saved to the ChocAn database.");
-            Console.WriteLine(member.ToString());
-            Console.WriteLine(service.ToString());
-            Console.WriteLine(date.ToString(DateFormat));
+            Console.WriteLine(consultation);
             Console.WriteLine("Press any key to contiue");
             Console.ReadKey();
         }

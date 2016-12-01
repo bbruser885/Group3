@@ -13,6 +13,7 @@ namespace ChocAn
         public Service ServiceRecord { get; set; }
         public Member MemberRecord { get; set; }
         public Provider ProviderRecord { get; set; }
+        public string Comments { get; set; }
 
         // Automatically set the creation date to now when adding a new consultation
         public Consultation() {
@@ -30,6 +31,9 @@ namespace ChocAn
             text.Append($"Member: {MemberRecord.Name}");
             text.Append(Environment.NewLine);
             text.Append($"Service: {ServiceRecord.Name}");
+            text.Append(Environment.NewLine);
+            text.Append("Comments: ");
+            text.Append(Comments.Length > 0 ? Comments : "(none)");
             text.Append(Environment.NewLine);
             text.Append($"Date: {Date:MM-dd-yyyy}");
             text.Append(Environment.NewLine);
