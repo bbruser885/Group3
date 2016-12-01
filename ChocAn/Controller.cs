@@ -55,6 +55,7 @@ namespace ChocAn
                     }
                     else
                     {
+                        View.PrintSuccess($"Logged in as {_currentUser.Name}, ID {_currentUser.Id:D9}");
                         View.MainMenu();
                         _currentUser = null;
                     }
@@ -72,7 +73,6 @@ namespace ChocAn
             if (service == null) return;
             var date = View.ReadDateTime("Date of consultation");
 
-            //Create a concultation object for the database collection and insert
             var consultation = new Consultation
             {
                 ProviderRecord = provider,
@@ -80,14 +80,22 @@ namespace ChocAn
                 ServiceRecord = service,
                 Date = date
             };
+
+            Console.WriteLine(consultation);
+            if (!View.Confirm("Is this information correct?"))
+            {
+                View.PrintError("Cancelling consultation entry.");
+                return;
+            }
             Consultation.Collection.Insert(consultation);
+            //Consultation was created, Write copy to file
+            writeConsultationToFile(consultation);
+            View.PrintSuccess("The following consultation has been saved to the ChocAn database.");
             Console.WriteLine(member.ToString());
             Console.WriteLine(service.ToString());
             Console.WriteLine(date.ToString(DateFormat));
             Console.WriteLine("Press any key to contiue");
             Console.ReadKey();
-            //Consultation was created, Write copy to file
-            writeConsultationToFile(consultation);
         }
 
         public void RequestDirectory()
@@ -102,7 +110,7 @@ namespace ChocAn
             }
             var filename = "DirectoryList.txt";
             File.AppendAllText(filename, text.ToString());
-            var path = BaseDir + Path.DirectorySeparatorChar + filename;
+            var path = BaseDir + filename;
             View.PrintSuccess($"Wrote {serviceTotal} service(s) to {path}");
         }
 
@@ -125,11 +133,11 @@ namespace ChocAn
                 c => c.MemberRecord
             );
 
-            var memberDirectory = ReportsDir + "\\member";
+            var memberDirectory = ReportsDir + Path.DirectorySeparatorChar + "member";
             Directory.CreateDirectory(memberDirectory);
+            Console.WriteLine(memberDirectory);
 
             var total = 0;
-            var memberConsultationCount = 1;
             foreach (var group in memberConsultations)
             {
                 var member = group.Key;
@@ -181,7 +189,7 @@ namespace ChocAn
                 c => c.ProviderRecord
             );
 
-            var providerdirectory = ReportsDir + "\\provider";
+            var providerdirectory = ReportsDir + Path.DirectorySeparatorChar + "provider";
             Directory.CreateDirectory(providerdirectory);
 
             var total = 0;
@@ -206,7 +214,8 @@ namespace ChocAn
                     output.Append(Environment.NewLine);
                     output.Append($"  Name: {consultation.ServiceRecord.Name}");
                     output.Append(Environment.NewLine);
-                    output.Append($"  Fee: {consultation.ServiceRecord.Fee}");
+                    output.Append($"  Fee: {consultation.ServiceRecord.Fee:C}");
+                    output.Append(Environment.NewLine);
                 }
                 var filename = Regex.Replace(provider.Name, @"\s+", "") +
                                end.ToString(DateFormat) +
@@ -242,9 +251,9 @@ namespace ChocAn
                c => c.ProviderRecord
            );
 
-            var APdirectory = ReportsDir + "\\APSummary";
+            var APdirectory = ReportsDir + Path.DirectorySeparatorChar + "APSummary";
             Directory.CreateDirectory(APdirectory);
-            var fileName = "ApSummary" + end.ToString(DateFormat) + ".txt";
+            var fileName = "APSummary" + end.ToString(DateFormat) + ".txt";
             var path = APdirectory + Path.DirectorySeparatorChar + fileName;
             foreach (var group in providerConsultations)
             {
@@ -264,7 +273,7 @@ namespace ChocAn
                 }
                 output.Append($"  Number of Consultations: {totalProvider}");
                 output.Append(Environment.NewLine);
-                output.Append($"  Total Fees: {totalFees}");
+                output.Append($"  Total Fees: {totalFees:C}");
                 output.Append(Environment.NewLine);
                 output.Append(Environment.NewLine);
 
@@ -278,10 +287,11 @@ namespace ChocAn
 
             File.AppendAllText(path, "Total Number of Providers: ");
             File.AppendAllText(path, sumProvider.ToString());
-            File.AppendAllText(path, "\n");
+            File.AppendAllText(path, Environment.NewLine);
             File.AppendAllText(path, "Total sum of Fees: ");
-            File.AppendAllText(path, sumFees.ToString());
-            File.AppendAllText(path, "\n");
+            File.AppendAllText(path, sumFees.ToString("C"));
+            File.AppendAllText(path, Environment.NewLine);
+            View.PrintSuccess($"Wrote AP report to {path}");
         }
 
         public void RunEFTReport()
@@ -736,8 +746,12 @@ namespace ChocAn
                     View.PrintError("User not found");
                     return;
                 }
+                Console.WriteLine();
                 View.PrintUser(found);
-            }        
+                Console.WriteLine();
+                Console.WriteLine("Press any key to contiue");
+                Console.ReadKey();
+            }
         }
         
         public IEnumerable<BaseModel> getManagers()

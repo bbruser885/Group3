@@ -27,7 +27,7 @@ namespace ChocAn
             text.Append($"= {Name} =================");
             text.Append(Environment.NewLine);
             text.Append(Environment.NewLine);
-            text.Append($"Id: {Id}");
+            text.Append($"Id: {Id:D9}");
             text.Append(Environment.NewLine);
             text.Append($"Name: {Name}");
             text.Append(Environment.NewLine);

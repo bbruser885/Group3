@@ -26,11 +26,11 @@ namespace ChocAn
            text.Append(Environment.NewLine);
            text.Append("= Service ==================");
            text.Append(Environment.NewLine);
-           text.Append(string.Format($"Id: {Id}"));
+           text.Append($"Id: {Id:D6}");
            text.Append(Environment.NewLine);
-           text.Append(string.Format($"Name: {Name}"));
+           text.Append($"Name: {Name}");
            text.Append(Environment.NewLine);
-           text.Append(string.Format($"Fee: {Fee:C}"));
+           text.Append($"Fee: {Fee:C}");
            text.Append(Environment.NewLine);
 
             return text.ToString();

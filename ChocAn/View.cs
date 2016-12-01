@@ -435,7 +435,7 @@ namespace ChocAn
             var defaultDate = DateTime.Now;
             do
             {
-                PrintPrompt($"{prompt} ({defaultDate:MM-dd-yyyy}): ");
+                PrintPrompt($"{prompt} ({defaultDate:MM-dd-yyyy})");
                 dateString = Console.ReadLine();
                 if (dateString.Length == 0) dateString = defaultDate.ToString("MM-dd-yyyy");
             } while (!DateTime.TryParseExact(dateString, "MM-dd-yyyy",
